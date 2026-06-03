@@ -18,6 +18,7 @@ A modern, full-featured project management system built with Next.js 16, React 1
 ## Features
 
 ### Core Features
+
 - **Role-Based Access Control**: Three user roles (Admin, Project Manager, Team Member) with granular permissions
 - **Project Management**: Create, edit, delete, and manage projects with status tracking
 - **Task Management**: Full task lifecycle management with priorities, due dates, and status updates
@@ -27,6 +28,7 @@ A modern, full-featured project management system built with Next.js 16, React 1
 - **Responsive Design**: Mobile-friendly interface that works on all devices
 
 ### Admin Features
+
 - Full system access
 - Create and manage projects
 - Assign and manage tasks
@@ -35,6 +37,7 @@ A modern, full-featured project management system built with Next.js 16, React 1
 - Delete projects and tasks
 
 ### Project Manager Features
+
 - Create and manage own projects
 - Assign tasks to team members
 - Edit project details
@@ -42,6 +45,7 @@ A modern, full-featured project management system built with Next.js 16, React 1
 - Cannot delete projects or manage team
 
 ### Team Member Features
+
 - View assigned tasks only
 - Update task status
 - Mark tasks as complete
@@ -52,6 +56,7 @@ A modern, full-featured project management system built with Next.js 16, React 1
 ## Tech Stack
 
 ### Frontend
+
 - **Next.js 16** - React framework with App Router
 - **React 19** - UI library with latest features
 - **TypeScript** - Type-safe development
@@ -63,12 +68,14 @@ A modern, full-featured project management system built with Next.js 16, React 1
 - **next-themes** - Dark mode support
 
 ### Styling
+
 - Pure Tailwind CSS (no component libraries)
 - Custom UI components built with Tailwind
 - Responsive design system
 - Dark mode with theme switching
 
 ### State Management
+
 - React hooks (useState, useContext)
 - SessionStorage for authentication demo
 - Client-side state management
@@ -76,18 +83,21 @@ A modern, full-featured project management system built with Next.js 16, React 1
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+ (LTS recommended)
 - npm, yarn, pnpm, or bun package manager
 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone <repository-url>
 cd project-management-app
 ```
 
 2. **Install dependencies**
+
 ```bash
 pnpm install
 # or
@@ -99,12 +109,14 @@ bun install
 ```
 
 3. **Set up environment variables**
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your configuration
 ```
 
 4. **Run the development server**
+
 ```bash
 pnpm dev
 # or
@@ -142,11 +154,13 @@ NEXT_PUBLIC_DEMO_MODE=true
 ```
 
 ### Required Environment Variables
+
 - `NEXT_PUBLIC_APP_NAME` - Application display name
 - `NEXT_PUBLIC_APP_URL` - Application URL (used for links and redirects)
 - `NEXT_PUBLIC_DEMO_MODE` - Enable demo mode with preset credentials (default: true)
 
 ### Optional Environment Variables
+
 - `NEXT_PUBLIC_ANALYTICS_ID` - Analytics tracking ID (Vercel Analytics)
 - `NEXT_PUBLIC_DISABLE_DARK_MODE` - Disable dark mode toggle (default: false)
 
@@ -155,27 +169,33 @@ NEXT_PUBLIC_DEMO_MODE=true
 The application includes three pre-configured demo accounts for testing different role levels. No sign-up is required.
 
 ### Admin Account
+
 ```
 Email: admin@company.com
 Role: Administrator (Full Access)
 Password: Not required (demo mode)
 ```
+
 **Access**: Create/edit/delete projects and tasks, manage team members, view all analytics
 
 ### Project Manager Account
+
 ```
 Email: pm@company.com
 Role: Project Manager (Project & Task Management)
 Password: Not required (demo mode)
 ```
+
 **Access**: Create/edit projects, assign tasks, view analytics, cannot delete or manage team
 
 ### Team Member Account
+
 ```
 Email: member@company.com
 Role: Team Member (Limited Access)
 Password: Not required (demo mode)
 ```
+
 **Access**: Update assigned tasks only, cannot create, edit, or delete projects/tasks
 
 ### How to Use Demo Credentials
@@ -243,22 +263,23 @@ project-management-app/
 
 ### Permission Matrix
 
-| Feature | Admin | PM | Member |
-|---------|-------|----|----|
-| Create Projects | ✅ | ✅ | ❌ |
-| Edit Projects | ✅ | ✅ | ❌ |
-| Delete Projects | ✅ | ❌ | ❌ |
-| Create Tasks | ✅ | ✅ | ❌ |
-| Edit All Tasks | ✅ | ✅ | ❌ |
-| Edit Own Tasks | ✅ | ✅ | ✅ |
-| Delete Tasks | ✅ | ❌ | ❌ |
-| Manage Team | ✅ | ❌ | ❌ |
-| View All Tasks | ✅ | ✅ | ❌ (Own Only) |
-| View Analytics | ✅ | ✅ | ❌ |
+| Feature         | Admin | PM  | Member        |
+| --------------- | ----- | --- | ------------- |
+| Create Projects | ✅    | ✅  | ❌            |
+| Edit Projects   | ✅    | ✅  | ❌            |
+| Delete Projects | ✅    | ❌  | ❌            |
+| Create Tasks    | ✅    | ✅  | ❌            |
+| Edit All Tasks  | ✅    | ✅  | ❌            |
+| Edit Own Tasks  | ✅    | ✅  | ✅            |
+| Delete Tasks    | ✅    | ❌  | ❌            |
+| Manage Team     | ✅    | ❌  | ❌            |
+| View All Tasks  | ✅    | ✅  | ❌ (Own Only) |
+| View Analytics  | ✅    | ✅  | ❌            |
 
 ### Implementation
 
 The RBAC system is implemented in `/lib/auth.ts` with utility functions:
+
 - `getUserRole()` - Get current user's role
 - `hasPermission(role, permission)` - Check if user has specific permission
 - `canUserEditTask(role, assigneeEmail)` - Check if user can edit a task
@@ -268,6 +289,7 @@ The RBAC system is implemented in `/lib/auth.ts` with utility functions:
 ## Usage Guide
 
 ### Creating a Project
+
 1. Log in with Admin or PM credentials
 2. Navigate to "Projects" in the sidebar
 3. Click "New Project" button
@@ -275,18 +297,21 @@ The RBAC system is implemented in `/lib/auth.ts` with utility functions:
 5. Click "Create Project"
 
 ### Creating a Task
+
 1. Navigate to "Tasks" in the sidebar
 2. Click "New Task" button (Admin/PM only)
 3. Fill in task details (title, project, priority, due date)
 4. Click "Create Task"
 
 ### Updating Task Status (Member Access)
+
 1. Navigate to "Tasks" in the sidebar
 2. Team members see only their assigned tasks
 3. Click the checkbox next to a task to toggle status
 4. Or click "Edit" to update task details
 
 ### Managing Team Members
+
 1. Log in with Admin credentials
 2. Navigate to "Team" in the sidebar
 3. Click "Add Member" to add new team members
@@ -294,6 +319,7 @@ The RBAC system is implemented in `/lib/auth.ts` with utility functions:
 5. Click delete icon to remove members
 
 ### Viewing Analytics
+
 1. Navigate to "Analytics" in the sidebar
 2. View project distribution, task completion rates, and team performance
 3. Charts update based on project and task data
@@ -305,6 +331,7 @@ The RBAC system is implemented in `/lib/auth.ts` with utility functions:
 The application is optimized for deployment on Vercel.
 
 1. **Push to GitHub**
+
 ```bash
 git add .
 git commit -m "Initial commit"
@@ -312,6 +339,7 @@ git push origin main
 ```
 
 2. **Deploy on Vercel**
+
 - Visit [vercel.com](https://vercel.com)
 - Click "New Project"
 - Select your GitHub repository
@@ -319,6 +347,7 @@ git push origin main
 - Click "Deploy"
 
 3. **Environment Variables on Vercel**
+
 - Go to Project Settings → Environment Variables
 - Add required environment variables
 - Redeploy for changes to take effect
@@ -326,6 +355,7 @@ git push origin main
 ### Deploy to Other Platforms
 
 #### Netlify
+
 ```bash
 # Build the project
 pnpm build
@@ -335,6 +365,7 @@ pnpm build
 ```
 
 #### Docker
+
 ```dockerfile
 FROM node:18-alpine
 
@@ -357,6 +388,7 @@ docker run -p 3000:3000 project-manager
 ```
 
 #### Self-Hosted
+
 ```bash
 # Build production bundle
 pnpm build
@@ -370,12 +402,14 @@ pnpm start
 ## Development
 
 ### Code Style
+
 - TypeScript for type safety
 - Tailwind CSS for styling
 - React hooks for state management
 - ESLint configuration included
 
 ### Running Tests
+
 ```bash
 pnpm lint
 ```
@@ -383,12 +417,14 @@ pnpm lint
 ### Making Changes
 
 1. **Add a new component**
+
 ```bash
 # Create component in /components/ui/
 touch components/ui/new-component.tsx
 ```
 
 2. **Add a new page**
+
 ```bash
 # Create page in /app/dashboard/
 mkdir -p app/dashboard/new-page
@@ -396,21 +432,16 @@ touch app/dashboard/new-page/page.tsx
 ```
 
 3. **Update styles**
+
 - Edit Tailwind classes in component files
 - Update design tokens in `/app/globals.css` if needed
-
-### Debugging
-
-Enable debug logging by adding console statements:
-```typescript
-console.log("[v0] Variable name:", variableName);
-```
 
 View logs in browser DevTools Console.
 
 ## Features Overview
 
 ### Dashboard
+
 - Key metrics overview
 - Project statistics
 - Task completion charts
@@ -418,6 +449,7 @@ View logs in browser DevTools Console.
 - Quick access to projects and tasks
 
 ### Projects Page
+
 - List of all projects with search
 - Project status badges (Active, On-Hold, Completed)
 - Progress indicators
@@ -426,6 +458,7 @@ View logs in browser DevTools Console.
 - Confirmation dialog for delete operations
 
 ### Tasks Page
+
 - Advanced filtering (status, priority, search)
 - Sortable columns
 - Quick status toggle via checkbox
@@ -434,6 +467,7 @@ View logs in browser DevTools Console.
 - Confirmation dialog for deletions
 
 ### Team Page
+
 - Team member cards with roles
 - Status indicators
 - Project assignments
@@ -442,6 +476,7 @@ View logs in browser DevTools Console.
 - Message button for communication
 
 ### Analytics Page
+
 - Project status distribution
 - Task completion trends
 - Team productivity metrics
@@ -489,6 +524,7 @@ MIT License - feel free to use this project for personal or commercial purposes.
 ## Support
 
 For issues, questions, or suggestions:
+
 1. Check existing documentation
 2. Review the code comments
 3. Check browser console for errors
@@ -497,6 +533,7 @@ For issues, questions, or suggestions:
 ## Changelog
 
 ### Version 1.0.0
+
 - Initial release
 - Role-based access control
 - Project and task management
@@ -508,6 +545,7 @@ For issues, questions, or suggestions:
 ## Contributing
 
 Contributions are welcome! Please:
+
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
