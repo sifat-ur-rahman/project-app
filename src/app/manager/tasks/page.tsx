@@ -1,367 +1,349 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Modal } from '@/components/ui/modal';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
-import { Plus, Search, Edit, CheckCircle2, Circle } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Modal } from "@/components/ui/modal";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import {
+  Plus,
+  Search,
+  Edit,
+  CheckCircle2,
+  Circle,
+  AlertCircle,
+} from "lucide-react";
+import {
+  getAllTasks,
+  createTask,
+  updateTask,
+  updateTaskStatus,
+} from "@/server/actions/tasks";
+import { getAllTeamMembers } from "@/server/actions/team";
+import { getAllProjects } from "@/server/actions/projects";
 
 /**
  * Manager (PM) Tasks Management Page
- * 
- * Task management with PM permissions:
- * - Create tasks
- * - Edit tasks
- * - NO delete (admin only)
- * - Assign tasks to team members
- * - Toggle task status
+ *
+ * PM task management with database integration:
+ * - Create/edit tasks in own projects
+ * - Assign to team members
+ * - No delete (admin only)
+ * - Real data from MongoDB
  */
 
-interface Task {
-  id: string;
-  title: string;
-  project: string;
-  assignee: string;
-  assigneeEmail: string;
-  status: 'pending' | 'in-progress' | 'completed';
-  priority: 'low' | 'medium' | 'high';
-  dueDate: string;
-}
-
-const initialTasks: Task[] = [
-  {
-    id: '1',
-    title: 'Design Homepage',
-    project: 'Website Redesign',
-    assignee: 'Sarah Chen',
-    assigneeEmail: 'sarah@company.com',
-    status: 'in-progress',
-    priority: 'high',
-    dueDate: '2024-11-30',
-  },
-  {
-    id: '2',
-    title: 'Setup Database',
-    project: 'Mobile App',
-    assignee: 'John Smith',
-    assigneeEmail: 'john@company.com',
-    status: 'pending',
-    priority: 'high',
-    dueDate: '2024-12-05',
-  },
-  {
-    id: '3',
-    title: 'API Documentation',
-    project: 'API Integration',
-    assignee: 'Emily Davis',
-    assigneeEmail: 'emily@company.com',
-    status: 'in-progress',
-    priority: 'medium',
-    dueDate: '2024-11-20',
-  },
-];
-
 export default function ManagerTasksPage() {
-  const [tasks, setTasks] = useState(initialTasks);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filterStatus, setFilterStatus] = useState('all');
-  const [filterPriority, setFilterPriority] = useState('all');
+  const [userEmail, setUserEmail] = useState("");
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [projects, setProjects] = useState<any[]>([]);
+  const [teamMembers, setTeamMembers] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    project: '',
-    assignee: '',
-    status: 'pending' as const,
-    priority: 'medium' as const,
-    dueDate: '',
+    title: "",
+    description: "",
+    projectId: "",
+    assigneeEmail: "",
+    status: "pending",
+    priority: "medium",
+    dueDate: "",
   });
 
-  const handleAddTask = () => {
-    if (formData.title.trim()) {
+  useEffect(() => {
+    const email = sessionStorage.getItem("userEmail");
+    setUserEmail(email || "");
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const [tasksR, projectsR, teamR] = await Promise.all([
+        getAllTasks(),
+        getAllProjects(),
+        getAllTeamMembers(),
+      ]);
+      if (tasksR.success) setTasks(tasksR.tasks || []);
+      if (projectsR.success && userEmail) {
+        setProjects(
+          (projectsR.projects || []).filter(
+            (p) => p.owner?.email === userEmail,
+          ),
+        );
+      }
+      if (teamR.success) setTeamMembers(teamR.members || []);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveTask = async () => {
+    if (!formData.title.trim()) return;
+    setIsLoading(true);
+    try {
       if (editingId) {
-        setTasks(tasks.map(t => 
-          t.id === editingId ? { ...t, ...formData, assigneeEmail: tasks.find(x => x.id === editingId)?.assigneeEmail || '' } : t
-        ));
-        setEditingId(null);
-      } else {
-        const newTask: Task = {
-          id: Date.now().toString(),
+        const result = await updateTask(editingId, {
           title: formData.title,
-          project: formData.project || 'Unassigned',
-          assignee: formData.assignee || 'Unassigned',
-          assigneeEmail: '',
+          description: formData.description,
+          assigneeEmail: formData.assigneeEmail,
           status: formData.status,
           priority: formData.priority,
           dueDate: formData.dueDate,
-        };
-        setTasks([newTask, ...tasks]);
+        });
+        console.log("updateTask result:", result);
+        if (result.success) {
+          await fetchData();
+          setEditingId(null);
+        }
+      } else {
+        const result = await createTask({
+          title: formData.title,
+          description: formData.description,
+          projectId: formData.projectId,
+          assigneeEmail: formData.assigneeEmail,
+          status: formData.status,
+          priority: formData.priority,
+          dueDate: formData.dueDate,
+          projectName: "",
+          createdByEmail: userEmail,
+        });
+        console.log("createTask result:", result);
+        if (result.success) {
+          await fetchData();
+        }
       }
-      setFormData({ title: '', project: '', assignee: '', status: 'pending', priority: 'medium', dueDate: '' });
+      await fetchData();
       setIsModalOpen(false);
+      setEditingId(null);
+      setFormData({
+        title: "",
+        description: "",
+        projectId: "",
+        assigneeEmail: "",
+        status: "pending",
+        priority: "medium",
+        dueDate: "",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleOpenEdit = (task: Task) => {
-    setEditingId(task.id);
-    setFormData({
-      title: task.title,
-      project: task.project,
-      assignee: task.assignee,
-      status: task.status,
-      priority: task.priority,
-      dueDate: task.dueDate,
-    });
-    setIsModalOpen(true);
-  };
-
-  const handleToggleStatus = (id: string) => {
-    setTasks(tasks.map(t =>
-      t.id === id
-        ? { ...t, status: t.status === 'completed' ? 'pending' : 'completed' }
-        : t
-    ));
-  };
-
-  let filteredTasks = tasks.filter(t => {
-    const searchMatch = t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.project.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.assignee.toLowerCase().includes(searchQuery.toLowerCase());
-    return searchMatch;
-  });
-
-  if (filterStatus !== 'all') {
-    filteredTasks = filteredTasks.filter(t => t.status === filterStatus);
-  }
-
-  if (filterPriority !== 'all') {
-    filteredTasks = filteredTasks.filter(t => t.priority === filterPriority);
-  }
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high':
-        return 'error';
-      case 'medium':
-        return 'warning';
-      case 'low':
-        return 'success';
-      default:
-        return 'default';
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'completed':
-        return 'success';
-      case 'in-progress':
-        return 'info';
-      case 'pending':
-        return 'warning';
-      default:
-        return 'default';
-    }
-  };
+  // Filter tasks for PM's projects only
+  const myProjectIds = projects.map((p) => p._id);
+  const myTasks = tasks
+    .filter((t) => myProjectIds.includes(t.projectId))
+    .filter((t) => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">Tasks</h1>
-          <p className="text-muted-foreground mt-1">Manage your team tasks - Create and edit only</p>
+          <p className="text-muted-foreground mt-1">
+            {myTasks.length} tasks in my projects
+          </p>
         </div>
         <Button
           onClick={() => {
             setEditingId(null);
-            setFormData({ title: '', project: '', assignee: '', status: 'pending', priority: 'medium', dueDate: '' });
+            setFormData({
+              title: "",
+              description: "",
+              projectId: "",
+              assigneeEmail: "",
+              status: "pending",
+              priority: "medium",
+              dueDate: "",
+            });
             setIsModalOpen(true);
           }}
           className="flex items-center gap-2"
+          disabled={isLoading}
         >
           <Plus size={20} />
           New Task
         </Button>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex gap-2 flex-wrap">
-        <div className="flex-1 min-w-64 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+      <div className="flex gap-2">
+        <div className="flex-1 relative">
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={20}
+          />
           <Input
             placeholder="Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
+            disabled={isLoading}
           />
         </div>
-        <Select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          options={[
-            { value: 'all', label: 'All Statuses' },
-            { value: 'pending', label: 'Pending' },
-            { value: 'in-progress', label: 'In Progress' },
-            { value: 'completed', label: 'Completed' },
-          ]}
-        />
-        <Select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          options={[
-            { value: 'all', label: 'All Priorities' },
-            { value: 'low', label: 'Low' },
-            { value: 'medium', label: 'Medium' },
-            { value: 'high', label: 'High' },
-          ]}
-        />
       </div>
 
-      {/* Permission Note */}
-      <div className="p-3 bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded">
-        <p className="text-sm text-blue-900 dark:text-blue-200">
-          You can create and edit tasks, but cannot delete. Contact an admin to delete tasks.
-        </p>
-      </div>
-
-      {/* Tasks List */}
       <div className="space-y-2">
-        {filteredTasks.map((task) => (
-          <Card key={task.id}>
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between gap-4">
-                <button
-                  onClick={() => handleToggleStatus(task.id)}
-                  className="flex-shrink-0 text-muted-foreground hover:text-primary"
-                >
-                  {task.status === 'completed' ? (
-                    <CheckCircle2 size={24} className="text-green-600" />
-                  ) : (
-                    <Circle size={24} />
-                  )}
-                </button>
-
-                <div className="flex-1 min-w-0">
-                  <p className={`font-medium ${task.status === 'completed' ? 'line-through text-muted-foreground' : ''}`}>
-                    {task.title}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                    <span>{task.project}</span>
-                    <span>•</span>
-                    <span>{task.assignee}</span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                  <Badge variant={getPriorityColor(task.priority) as any}>
-                    {task.priority}
-                  </Badge>
-                  <Badge variant={getStatusColor(task.status) as any}>
-                    {task.status}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">{new Date(task.dueDate).toLocaleDateString()}</span>
-                </div>
-
-                <div className="flex gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleOpenEdit(task)}
-                  >
-                    <Edit size={16} />
-                  </Button>
-                </div>
-              </div>
+        {myTasks.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-muted-foreground">No tasks in your projects</p>
             </CardContent>
           </Card>
-        ))}
+        ) : (
+          myTasks.map((task) => (
+            <Card key={task._id}>
+              <CardContent className="py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <button
+                    onClick={() =>
+                      updateTaskStatus(
+                        task._id,
+                        task.status === "completed" ? "pending" : "completed",
+                      ).then(() => fetchData())
+                    }
+                    className="flex-shrink-0"
+                  >
+                    {task.status === "completed" ? (
+                      <CheckCircle2 size={24} className="text-green-600" />
+                    ) : (
+                      <Circle size={24} />
+                    )}
+                  </button>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`font-medium ${task.status === "completed" ? "line-through text-muted-foreground" : ""}`}
+                    >
+                      {task.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {task.assignee?.name || "Unassigned"}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 flex-shrink-0">
+                    <Badge
+                      variant={task.priority === "high" ? "error" : "default"}
+                    >
+                      {task.priority}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setEditingId(task._id);
+                        setFormData({
+                          title: task.title,
+                          description: task.description || "",
+                          projectId: task.projectId,
+                          assigneeEmail: task.assignee?.email || "",
+                          status: task.status,
+                          priority: task.priority,
+                          dueDate: task.dueDate
+                            ? new Date(task.dueDate).toISOString().split("T")[0]
+                            : "",
+                        });
+                        setIsModalOpen(true);
+                      }}
+                      disabled={isLoading}
+                    >
+                      <Edit size={16} />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
-      {/* Empty State */}
-      {filteredTasks.length === 0 && (
-        <Card>
-          <CardContent className="text-center py-12">
-            <p className="text-muted-foreground">No tasks found</p>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Create/Edit Modal */}
       <Modal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingId(null);
-          setFormData({ title: '', project: '', assignee: '', status: 'pending', priority: 'medium', dueDate: '' });
-        }}
-        title={editingId ? 'Edit Task' : 'Create New Task'}
+        onClose={() => setIsModalOpen(false)}
+        title={editingId ? "Edit Task" : "New Task"}
         actions={
           <>
             <Button
               variant="outline"
-              onClick={() => {
-                setIsModalOpen(false);
-                setEditingId(null);
-                setFormData({ title: '', project: '', assignee: '', status: 'pending', priority: 'medium', dueDate: '' });
-              }}
+              onClick={() => setIsModalOpen(false)}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button onClick={handleAddTask}>
-              {editingId ? 'Update' : 'Create'}
+            <Button onClick={handleSaveTask} disabled={isLoading}>
+              Save
             </Button>
           </>
         }
       >
         <div className="space-y-4">
           <Input
-            label="Task Title"
+            label="Title"
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-            placeholder="Enter task title"
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
+            placeholder="Task title"
+            disabled={isLoading}
           />
-          <Input
-            label="Project"
-            value={formData.project}
-            onChange={(e) => setFormData({ ...formData, project: e.target.value })}
-            placeholder="Enter project name"
-          />
-          <Input
-            label="Assignee"
-            value={formData.assignee}
-            onChange={(e) => setFormData({ ...formData, assignee: e.target.value })}
-            placeholder="Enter assignee name"
+          <Textarea
+            label="Description"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            placeholder="Description"
+            rows={3}
+            disabled={isLoading}
           />
           <Select
-            label="Status"
-            value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            label="Project"
+            value={formData.projectId}
+            onChange={(e) =>
+              setFormData({ ...formData, projectId: e.target.value })
+            }
             options={[
-              { value: 'pending', label: 'Pending' },
-              { value: 'in-progress', label: 'In Progress' },
-              { value: 'completed', label: 'Completed' },
+              { value: "", label: "Select..." },
+              ...projects.map((p) => ({ value: p.id, label: p.name })),
             ]}
+            disabled={isLoading}
+          />
+          <Select
+            label="Assignee"
+            value={formData.assigneeEmail}
+            onChange={(e) =>
+              setFormData({ ...formData, assigneeEmail: e.target.value })
+            }
+            options={[
+              { value: "", label: "Unassigned" },
+              ...teamMembers.map((m) => ({ value: m.email, label: m.name })),
+            ]}
+            disabled={isLoading}
           />
           <Select
             label="Priority"
             value={formData.priority}
-            onChange={(e) => setFormData({ ...formData, priority: e.target.value as any })}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value })
+            }
             options={[
-              { value: 'low', label: 'Low' },
-              { value: 'medium', label: 'Medium' },
-              { value: 'high', label: 'High' },
+              { value: "low", label: "Low" },
+              { value: "medium", label: "Medium" },
+              { value: "high", label: "High" },
             ]}
+            disabled={isLoading}
           />
           <Input
-            type="date"
             label="Due Date"
+            type="date"
             value={formData.dueDate}
-            onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, dueDate: e.target.value })
+            }
+            disabled={isLoading}
           />
         </div>
       </Modal>

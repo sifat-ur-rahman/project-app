@@ -103,7 +103,7 @@ export default function AdminTasksPage() {
     if (!formData.title.trim()) return;
     const userEmail =
       sessionStorage.getItem("userEmail") || "admin@company.com";
-    console.log("form Data", formData);
+
     setIsLoading(true);
     try {
       if (editingId) {
@@ -115,7 +115,7 @@ export default function AdminTasksPage() {
           priority: formData.priority,
           dueDate: formData.dueDate,
         });
-        console.log("updateTask result:", result);
+
         if (result.success) {
           await fetchData();
           setEditingId(null);
@@ -132,7 +132,7 @@ export default function AdminTasksPage() {
           projectName: "",
           createdByEmail: userEmail,
         });
-        console.log("createTask result:", result);
+
         if (result.success) {
           await fetchData();
         }
