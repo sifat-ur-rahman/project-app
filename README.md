@@ -1,557 +1,414 @@
 # Project Management Application
 
-A modern, full-featured project management system built with Next.js 16, React 19, and Tailwind CSS. Features role-based access control, real-time task management, team collaboration, and comprehensive analytics.
+A modern, full-featured project management system built with **Next.js 16**, **React 19**, **MongoDB**, and **Tailwind CSS**. Features role-based access control, real-time task management, team collaboration, and comprehensive analytics with a production-ready backend.
+
+---
 
 ## Table of Contents
 
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
+- [Features Overview](#features-overview)
+- [Project Setup Instructions](#project-setup-instructions)
 - [Environment Variables](#environment-variables)
 - [Demo Credentials](#demo-credentials)
-- [Project Structure](#project-structure)
-- [Role-Based Access Control](#role-based-access-control)
-- [Usage Guide](#usage-guide)
-- [Deployment](#deployment)
-- [Development](#development)
+- [Deployment Instructions](#deployment-instructions)
 
-## Features
+---
 
-### Core Features
+## Features Overview
 
-- **Role-Based Access Control**: Three user roles (Admin, Project Manager, Team Member) with granular permissions
-- **Project Management**: Create, edit, delete, and manage projects with status tracking
-- **Task Management**: Full task lifecycle management with priorities, due dates, and status updates
-- **Team Collaboration**: Add and manage team members with role assignments
-- **Real-Time Analytics**: Dashboard with charts, metrics, and activity tracking
-- **Dark Mode Support**: Full dark/light theme switching with persistent preferences
-- **Responsive Design**: Mobile-friendly interface that works on all devices
+### Core Capabilities
 
-### Admin Features
+**Project Management**
 
-- Full system access
-- Create and manage projects
-- Assign and manage tasks
-- Manage team members
-- View all analytics and reports
-- Delete projects and tasks
+- Create, edit, and delete projects with status tracking
+- Set project deadlines, budgets, and priority levels
+- Assign team members to projects
+- Track project progress and completion rates
 
-### Project Manager Features
+**Task Management**
 
-- Create and manage own projects
-- Assign tasks to team members
-- Edit project details
-- View team and analytics
-- Cannot delete projects or manage team
+- Full task lifecycle (create, assign, update, complete, delete)
+- Task priorities (critical, high, medium, low)
+- Task statuses (pending, in-progress, completed)
+- Due date tracking and notifications
+- Task filtering and search capabilities
 
-### Team Member Features
+**Team Collaboration**
 
-- View assigned tasks only
-- Update task status
-- Mark tasks as complete
-- Cannot create projects or tasks
-- Cannot access team management
-- Cannot delete any items
+- Add and manage team members
+- Assign roles (Admin, Project Manager, Team Member)
+- View team member activity and statistics
+- Task assignment and delegation
 
-## Tech Stack
+**Analytics & Reporting**
 
-### Frontend
+- Real-time dashboard with system metrics
+- Task completion rates and trends
+- Project status breakdown
+- Team productivity analytics
+- Custom analytics dashboards per role
 
-- **Next.js 16** - React framework with App Router
-- **React 19** - UI library with latest features
-- **TypeScript** - Type-safe development
-- **Tailwind CSS v4** - Utility-first CSS framework
-- **React Hook Form** - Efficient form management
-- **Zod** - TypeScript-first schema validation
-- **Recharts** - Beautiful charts and visualizations
-- **Lucide React** - Icon library
-- **next-themes** - Dark mode support
+**Role-Based Access Control**
 
-### Styling
+| Feature             | Admin | PM  | Member |
+| ------------------- | ----- | --- | ------ |
+| View all projects   | ✅    | ❌  | ❌     |
+| Create projects     | ✅    | ✅  | ❌     |
+| Edit own projects   | ✅    | ✅  | ❌     |
+| Edit all projects   | ✅    | ❌  | ❌     |
+| Delete projects     | ✅    | ❌  | ❌     |
+| Create tasks        | ✅    | ✅  | ❌     |
+| Edit all tasks      | ✅    | ✅  | ❌     |
+| Edit assigned tasks | ✅    | ✅  | ✅     |
+| Delete tasks        | ✅    | ❌  | ❌     |
+| Manage team         | ✅    | ❌  | ❌     |
+| View analytics      | ✅    | ✅  | ❌     |
 
-- Pure Tailwind CSS (no component libraries)
-- Custom UI components built with Tailwind
-- Responsive design system
-- Dark mode with theme switching
+**Additional Features**
 
-### State Management
+- Dark/Light theme switching
+- Responsive mobile design
+- Real-time data persistence with MongoDB
+- Server-side rendering with Next.js
+- TypeScript type safety throughout
 
-- React hooks (useState, useContext)
-- SessionStorage for authentication demo
-- Client-side state management
+---
 
-## Getting Started
+## Project Setup Instructions
 
 ### Prerequisites
 
-- Node.js 18+ (LTS recommended)
-- npm, yarn, pnpm, or bun package manager
+- **Node.js** 18+ (LTS recommended)
+- **npm**, **pnpm**, **yarn**, or **bun** package manager
+- **MongoDB** instance (local or MongoDB Atlas cloud)
+- **Git** for version control
 
-### Installation
+### Installation Steps
 
-1. **Clone the repository**
+#### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd project-management-app
 ```
 
-2. **Install dependencies**
+#### 2. Install Dependencies
 
 ```bash
+# Using pnpm (recommended)
 pnpm install
-# or
+
+# Or using npm
 npm install
-# or
+
+# Or using yarn
 yarn install
-# or
+
+# Or using bun
 bun install
 ```
 
-3. **Set up environment variables**
+#### 3. Setup MongoDB Connection
+
+Create a `.env.local` file in the project root:
 
 ```bash
-cp .env.example .env.local
-# Edit .env.local with your configuration
+# For local MongoDB
+MONGODB_URI=mongodb://localhost:27017/project-management-db
+
+# OR for MongoDB Atlas (cloud)
+MONGODB_URI=mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/project-management-db?retryWrites=true&w=majority
 ```
 
-4. **Run the development server**
+**If using local MongoDB**, ensure MongoDB is running:
+
+```bash
+# On macOS (with Homebrew)
+brew services start mongodb-community
+
+# On Linux
+sudo systemctl start mongodb
+
+# On Windows
+net start MongoDB
+```
+
+#### 4. Seed Demo Data
+
+Populate the database with sample data (8 users, 12 projects, 56 tasks):
+
+```bash
+pnpm seed
+```
+
+This creates demo accounts and realistic project/task data for testing.
+
+#### 5. Start Development Server
 
 ```bash
 pnpm dev
-# or
-npm run dev
-# or
-yarn dev
 ```
 
-The application will be available at `http://localhost:3000`
-
-### Build for Production
-
-```bash
-pnpm build
-pnpm start
-# or
-npm run build
-npm start
-# or
-yarn build
-yarn start
-```
-
-## Environment Variables
-
-### Local Development (.env.local)
-
-```env
-# Application
-NEXT_PUBLIC_APP_NAME=Project Manager
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Features
-NEXT_PUBLIC_DEMO_MODE=true
-```
-
-### Required Environment Variables
-
-- `NEXT_PUBLIC_APP_NAME` - Application display name
-- `NEXT_PUBLIC_APP_URL` - Application URL (used for links and redirects)
-- `NEXT_PUBLIC_DEMO_MODE` - Enable demo mode with preset credentials (default: true)
-
-### Optional Environment Variables
-
-- `NEXT_PUBLIC_ANALYTICS_ID` - Analytics tracking ID (Vercel Analytics)
-- `NEXT_PUBLIC_DISABLE_DARK_MODE` - Disable dark mode toggle (default: false)
-
-## Demo Credentials
-
-The application includes three pre-configured demo accounts for testing different role levels. No sign-up is required.
-
-### Admin Account
-
-```
-Email: admin@company.com
-Role: Administrator (Full Access)
-Password: Not required (demo mode)
-```
-
-**Access**: Create/edit/delete projects and tasks, manage team members, view all analytics
-
-### Project Manager Account
-
-```
-Email: pm@company.com
-Role: Project Manager (Project & Task Management)
-Password: Not required (demo mode)
-```
-
-**Access**: Create/edit projects, assign tasks, view analytics, cannot delete or manage team
-
-### Team Member Account
-
-```
-Email: member@company.com
-Role: Team Member (Limited Access)
-Password: Not required (demo mode)
-```
-
-**Access**: Update assigned tasks only, cannot create, edit, or delete projects/tasks
-
-### How to Use Demo Credentials
-
-1. Navigate to the login page at `http://localhost:3000/auth/login`
-2. Click on the demo account button for the role you want to test
-3. The app automatically logs you in with that role
-4. Click "Logout" in the sidebar to switch accounts
-
-**Note**: Demo data is stored in browser SessionStorage and resets on browser close. All changes are non-persistent in demo mode.
-
-## Project Structure
-
-```
-project-management-app/
-├── app/
-│   ├── auth/
-│   │   ├── login/
-│   │   │   └── page.tsx          # Login page with demo buttons
-│   │   └── signup/
-│   │       └── page.tsx          # Signup page
-│   ├── dashboard/
-│   │   ├── layout.tsx            # Dashboard layout with sidebar
-│   │   ├── page.tsx              # Dashboard home/overview
-│   │   ├── projects/
-│   │   │   ├── page.tsx          # Projects list with CRUD
-│   │   │   └── [id]/
-│   │   │       └── page.tsx      # Project detail view
-│   │   ├── tasks/
-│   │   │   └── page.tsx          # Tasks management with filters
-│   │   ├── team/
-│   │   │   └── page.tsx          # Team member management
-│   │   └── analytics/
-│   │       └── page.tsx          # Analytics dashboard
-│   ├── layout.tsx                # Root layout with dark mode
-│   ├── page.tsx                  # Home page (redirects to auth/login)
-│   └── globals.css               # Global styles and Tailwind config
-├── components/
-│   ├── ui/                       # Reusable Tailwind-based components
-│   │   ├── button.tsx
-│   │   ├── input.tsx
-│   │   ├── textarea.tsx
-│   │   ├── select.tsx
-│   │   ├── card.tsx
-│   │   ├── badge.tsx
-│   │   ├── modal.tsx
-│   │   ├── confirm-dialog.tsx
-│   │   ├── checkbox.tsx
-│   │   ├── table.tsx
-│   │   └── empty-state.tsx
-│   └── dashboard/
-│       └── sidebar.tsx           # Navigation sidebar
-├── lib/
-│   ├── auth.ts                   # Role-based access control utilities
-│   └── utils.ts                  # Utility functions
-├── public/                       # Static assets
-├── package.json
-├── tsconfig.json
-├── tailwind.config.ts            # Tailwind CSS config
-├── next.config.mjs               # Next.js config
-└── README.md                     # This file
-```
-
-## Role-Based Access Control
-
-### Permission Matrix
-
-| Feature         | Admin | PM  | Member        |
-| --------------- | ----- | --- | ------------- |
-| Create Projects | ✅    | ✅  | ❌            |
-| Edit Projects   | ✅    | ✅  | ❌            |
-| Delete Projects | ✅    | ❌  | ❌            |
-| Create Tasks    | ✅    | ✅  | ❌            |
-| Edit All Tasks  | ✅    | ✅  | ❌            |
-| Edit Own Tasks  | ✅    | ✅  | ✅            |
-| Delete Tasks    | ✅    | ❌  | ❌            |
-| Manage Team     | ✅    | ❌  | ❌            |
-| View All Tasks  | ✅    | ✅  | ❌ (Own Only) |
-| View Analytics  | ✅    | ✅  | ❌            |
-
-### Implementation
-
-The RBAC system is implemented in `/lib/auth.ts` with utility functions:
-
-- `getUserRole()` - Get current user's role
-- `hasPermission(role, permission)` - Check if user has specific permission
-- `canUserEditTask(role, assigneeEmail)` - Check if user can edit a task
-- `canUserDeleteTask(role)` - Check if user can delete tasks
-- `canUserDeleteProject(role)` - Check if user can delete projects
-
-## Usage Guide
-
-### Creating a Project
-
-1. Log in with Admin or PM credentials
-2. Navigate to "Projects" in the sidebar
-3. Click "New Project" button
-4. Fill in project details (name, description, status)
-5. Click "Create Project"
-
-### Creating a Task
-
-1. Navigate to "Tasks" in the sidebar
-2. Click "New Task" button (Admin/PM only)
-3. Fill in task details (title, project, priority, due date)
-4. Click "Create Task"
-
-### Updating Task Status (Member Access)
-
-1. Navigate to "Tasks" in the sidebar
-2. Team members see only their assigned tasks
-3. Click the checkbox next to a task to toggle status
-4. Or click "Edit" to update task details
-
-### Managing Team Members
-
-1. Log in with Admin credentials
-2. Navigate to "Team" in the sidebar
-3. Click "Add Member" to add new team members
-4. Click "Edit" to update member details
-5. Click delete icon to remove members
-
-### Viewing Analytics
-
-1. Navigate to "Analytics" in the sidebar
-2. View project distribution, task completion rates, and team performance
-3. Charts update based on project and task data
-
-## Deployment
-
-### Deploy to Vercel
-
-The application is optimized for deployment on Vercel.
-
-1. **Push to GitHub**
-
-```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
-```
-
-2. **Deploy on Vercel**
-
-- Visit [vercel.com](https://vercel.com)
-- Click "New Project"
-- Select your GitHub repository
-- Vercel auto-detects Next.js configuration
-- Click "Deploy"
-
-3. **Environment Variables on Vercel**
-
-- Go to Project Settings → Environment Variables
-- Add required environment variables
-- Redeploy for changes to take effect
-
-### Deploy to Other Platforms
-
-#### Netlify
-
-```bash
-# Build the project
-pnpm build
-
-# Deploy the .next folder
-# (Requires Node.js runtime support)
-```
-
-#### Docker
-
-```dockerfile
-FROM node:18-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
-```
-
-```bash
-docker build -t project-manager .
-docker run -p 3000:3000 project-manager
-```
-
-#### Self-Hosted
-
-```bash
-# Build production bundle
-pnpm build
-
-# Start server
-pnpm start
-
-# Server runs on http://localhost:3000
-```
-
-## Development
-
-### Code Style
-
-- TypeScript for type safety
-- Tailwind CSS for styling
-- React hooks for state management
-- ESLint configuration included
-
-### Running Tests
-
-```bash
-pnpm lint
-```
-
-### Making Changes
-
-1. **Add a new component**
-
-```bash
-# Create component in /components/ui/
-touch components/ui/new-component.tsx
-```
-
-2. **Add a new page**
-
-```bash
-# Create page in /app/dashboard/
-mkdir -p app/dashboard/new-page
-touch app/dashboard/new-page/page.tsx
-```
-
-3. **Update styles**
-
-- Edit Tailwind classes in component files
-- Update design tokens in `/app/globals.css` if needed
-
-View logs in browser DevTools Console.
-
-## Features Overview
-
-### Dashboard
-
-- Key metrics overview
-- Project statistics
-- Task completion charts
-- Recent activity feed
-- Quick access to projects and tasks
-
-### Projects Page
-
-- List of all projects with search
-- Project status badges (Active, On-Hold, Completed)
-- Progress indicators
-- Action buttons (View, Edit, Delete)
-- Modal for creating/editing projects
-- Confirmation dialog for delete operations
-
-### Tasks Page
-
-- Advanced filtering (status, priority, search)
-- Sortable columns
-- Quick status toggle via checkbox
-- Role-based visibility (members see assigned tasks only)
-- Modal for creating/editing tasks
-- Confirmation dialog for deletions
-
-### Team Page
-
-- Team member cards with roles
-- Status indicators
-- Project assignments
-- Contact information
-- Add/Edit/Remove members (Admin only)
-- Message button for communication
-
-### Analytics Page
-
-- Project status distribution
-- Task completion trends
-- Team productivity metrics
-- Key performance indicators
-- Performance breakdown by team member
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-- Mobile browsers (iOS Safari, Chrome Mobile)
-
-## Security Considerations
-
-**Important**: This is a demonstration application. For production use:
-
-1. **Replace Demo Authentication**
-   - Implement real authentication (Better Auth, Auth.js, Firebase, etc.)
-   - Use secure password hashing
-   - Implement JWT or session tokens
-
-2. **Add Backend API**
-   - Create API routes in `/app/api/`
-   - Add proper request validation
-   - Implement rate limiting
-   - Add CORS configuration
-
-3. **Database Integration**
-   - Use PostgreSQL, MongoDB, or similar
-   - Implement proper data persistence
-   - Add database migrations
-
-4. **Security Headers**
-   - Configure CORS
-   - Add CSRF protection
-   - Implement rate limiting
-   - Add security headers middleware
-
-## License
-
-MIT License - feel free to use this project for personal or commercial purposes.
-
-## Support
-
-For issues, questions, or suggestions:
-
-1. Check existing documentation
-2. Review the code comments
-3. Check browser console for errors
-4. Test with different demo roles
-
-## Changelog
-
-### Version 1.0.0
-
-- Initial release
-- Role-based access control
-- Project and task management
-- Team collaboration features
-- Analytics dashboard
-- Dark mode support
-- Responsive design
-
-## Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+The application will be available at **http://localhost:3000**
 
 ---
 
-Built with ❤️ using Next.js, React, and Tailwind CSS
+## Environment Variables
+
+### Required Variables
+
+| Variable      | Description               | Example                                           |
+| ------------- | ------------------------- | ------------------------------------------------- |
+| `MONGODB_URI` | MongoDB connection string | `mongodb://localhost:27017/project-management-db` |
+
+### Optional Variables
+
+Currently, all required environment variables are listed above. Additional configuration options may be added for production deployments.
+
+### Setup Instructions
+
+1. Create a `.env.local` file in the project root directory
+2. Copy the template from `.env.local.example`:
+
+```bash
+cp .env.local.example .env.local
+```
+
+3. Fill in your MongoDB URI:
+
+```bash
+MONGODB_URI=mongodb://localhost:27017/project-management-db
+```
+
+4. Save the file (it will be gitignored automatically)
+
+---
+
+## Demo Credentials
+
+After running `pnpm seed`, three demo accounts are available:
+
+### Admin Account
+
+- **Email**: `admin@company.com`
+- **Password**: `admin123`
+- **Role**: Administrator (full system access)
+- **Can**: View all data, create/edit/delete projects and tasks, manage team members, view all analytics
+
+### Project Manager Account
+
+- **Email**: `pm@company.com`
+- **Password**: `pm123`
+- **Role**: Project Manager (project and task management)
+- **Can**: Create own projects, manage tasks, view team, view own project analytics
+
+### Team Member Account
+
+- **Email**: `member@company.com`
+- **Password**: `member123`
+- **Role**: Team Member (limited task access)
+- **Can**: View assigned tasks, update task status, view own performance
+
+### Login Process
+
+1. Navigate to **http://localhost:3000**
+2. Click on **"Admin Demo"**, **"PM Demo"**, or **"Member Demo"** button
+3. Or enter credentials manually:
+   - Email: Use demo email above
+   - Password: Use demo password above
+4. You'll be redirected to your role-specific dashboard
+
+### Create New Users
+
+You can also create new users via the **Signup** page:
+
+1. Click **"Create Account"** on the login page
+2. Enter email, password, and full name
+3. New users are created as Team Members by default
+4. Login with your new credentials
+
+---
+
+## Deployment Instructions
+
+### Deployment Checklist
+
+Before deploying to production:
+
+- [ ] MongoDB instance is provisioned (use MongoDB Atlas for cloud)
+- [ ] Environment variables are set in production
+- [ ] All demo data has been backed up or removed
+- [ ] User authentication is properly configured
+- [ ] HTTPS is enabled on the deployment platform
+- [ ] Database backups are configured
+
+### Deploying to Vercel (Recommended)
+
+Vercel is the recommended platform for Next.js applications.
+
+#### Step 1: Push Code to GitHub
+
+```bash
+git add .
+git commit -m "Production ready deployment"
+git push origin main
+```
+
+#### Step 2: Connect to Vercel
+
+1. Go to [vercel.com](https://vercel.com)
+2. Sign in with your GitHub account
+3. Click **"New Project"**
+4. Select your repository
+5. Configure the project:
+   - Framework: **Next.js**
+   - Root Directory: **./** (project root)
+
+#### Step 3: Add Environment Variables
+
+In the Vercel project settings:
+
+1. Go to **Settings → Environment Variables**
+2. Add `MONGODB_URI` with your production MongoDB connection string
+3. Select environments: **Production**, **Preview**, **Development**
+4. Click **Save**
+
+#### Step 4: Deploy
+
+```bash
+# Vercel auto-deploys on push to main branch
+git push origin main
+```
+
+Or manually deploy from the Vercel dashboard.
+
+### Deploying to Other Platforms
+
+#### AWS (EC2 + RDS)
+
+```bash
+# 1. SSH into EC2 instance
+ssh -i your-key.pem ec2-user@your-instance.amazonaws.com
+
+# 2. Clone repository
+git clone <repository-url>
+cd project-management-app
+
+# 3. Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# 4. Install dependencies
+npm install
+
+# 5. Create .env file
+echo "MONGODB_URI=mongodb+srv://user:pass@your-cluster.mongodb.net/project-management-db" > .env.local
+
+# 6. Build and start
+npm run build
+npm start
+```
+
+#### Docker Deployment
+
+```bash
+# Build Docker image
+docker build -t project-management-app .
+
+# Run container
+docker run -e MONGODB_URI="<your-mongodb-uri>" -p 3000:3000 project-management-app
+```
+
+#### Environment-Specific Deployments
+
+**Development**
+
+- URL: staging.example.com
+- Database: Development MongoDB instance
+- Features: All features enabled, verbose logging
+
+**Production**
+
+- URL: app.example.com
+- Database: Production MongoDB Atlas cluster
+- Features: All features enabled, optimized builds
+- Backups: Daily automated backups
+- Monitoring: Performance and error tracking enabled
+
+### Post-Deployment Setup
+
+After successful deployment:
+
+1. **Test Login**: Verify all demo accounts work
+2. **Check Database**: Confirm data persists across requests
+3. **Run Load Test**: Test with multiple concurrent users
+4. **Monitor Performance**: Check response times and error rates
+5. **Configure Monitoring**: Set up error tracking (optional)
+
+### Database Backup & Recovery
+
+#### Backup Strategy
+
+```bash
+# Backup MongoDB (Atlas)
+# Use Atlas automated backups (enabled by default)
+
+# Or manual backup
+mongodump --uri="your-mongodb-uri" --out=./backup
+```
+
+#### Recovery
+
+```bash
+# Restore from backup
+mongorestore --uri="your-mongodb-uri" ./backup
+```
+
+### Scaling Considerations
+
+- **Database**: Use MongoDB Atlas auto-scaling for production
+- **Server**: Enable auto-scaling on hosting platform (Vercel, AWS, etc.)
+- **Caching**: Add Redis for session caching if needed
+- **CDN**: Enable CDN for static assets (automatic on Vercel)
+
+---
+
+## Quick Reference
+
+### Common Commands
+
+```bash
+# Development
+pnpm dev              # Start dev server
+
+# Production Build
+pnpm build            # Create optimized build
+pnpm start            # Start production server
+
+# Database
+pnpm seed             # Populate with demo data
+
+# Code Quality
+pnpm lint             # Run ESLint
+```
+
+### Useful Links
+
+- **MongoDB Atlas**: https://www.mongodb.com/cloud/atlas
+- **Vercel Docs**: https://vercel.com/docs
+- **Next.js Docs**: https://nextjs.org/docs
+- **React Docs**: https://react.dev
+
+### Support
+
+For issues or questions:
+
+1. Check the documentation files in the project root
+2. Review GitHub issues for similar problems
+3. Contact the development team
+
+---
+
+**Last Updated**: 2024
+**Version**: 1.0.0
+**License**: MIT

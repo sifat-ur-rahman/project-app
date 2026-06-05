@@ -1,24 +1,24 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  LayoutDashboard, 
-  Settings, 
-  Users, 
-  FolderOpen, 
-  CheckSquare, 
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  Settings,
+  Users,
+  FolderOpen,
+  CheckSquare,
   BarChart3,
   LogOut,
   Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 /**
  * Admin Sidebar Navigation Component
- * 
+ *
  * Admin users have full access to all features:
  * - Dashboard overview
  * - Projects management (create, edit, delete)
@@ -34,39 +34,39 @@ export default function AdminSidebar() {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   // Navigation items for admin
   const navItems = [
     {
-      label: 'Dashboard',
-      href: '/admin/dashboard',
+      label: "Dashboard",
+      href: "/admin/dashboard",
       icon: LayoutDashboard,
     },
     {
-      label: 'Projects',
-      href: '/admin/projects',
+      label: "Projects",
+      href: "/admin/projects",
       icon: FolderOpen,
     },
     {
-      label: 'Tasks',
-      href: '/admin/tasks',
+      label: "Tasks",
+      href: "/admin/tasks",
       icon: CheckSquare,
     },
     {
-      label: 'Team',
-      href: '/admin/team',
+      label: "Team",
+      href: "/admin/team",
       icon: Users,
     },
     {
-      label: 'Analytics',
-      href: '/admin/analytics',
+      label: "Analytics",
+      href: "/admin/analytics",
       icon: BarChart3,
     },
     {
-      label: 'Settings',
-      href: '/admin/settings',
+      label: "Settings",
+      href: "/admin/settings",
       icon: Settings,
     },
   ];
@@ -86,7 +86,7 @@ export default function AdminSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
           transition-transform duration-300
           fixed lg:static
@@ -99,7 +99,7 @@ export default function AdminSidebar() {
       >
         {/* Logo / Branding */}
         <div className="p-6 border-b border-border">
-          <h1 className="text-xl font-bold text-foreground">Project Manager</h1>
+          <h1 className="text-xl font-bold text-foreground">TaskForge</h1>
           <p className="text-xs text-muted-foreground mt-1">Admin Panel</p>
         </div>
 
@@ -118,8 +118,8 @@ export default function AdminSidebar() {
                   transition-colors duration-200
                   ${
                     active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-muted'
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground hover:bg-muted"
                   }
                 `}
               >

@@ -1,14 +1,31 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { FolderOpen, CheckSquare, TrendingUp } from 'lucide-react';
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { FolderOpen, CheckSquare, TrendingUp } from "lucide-react";
 
 /**
  * Manager (PM) Dashboard Page
- * 
+ *
  * Project-focused overview with limited metrics:
  * - My projects count
  * - My team's tasks overview
@@ -17,34 +34,34 @@ import { FolderOpen, CheckSquare, TrendingUp } from 'lucide-react';
  */
 
 const projectData = [
-  { name: 'Q1', projects: 2, completed: 1 },
-  { name: 'Q2', projects: 3, completed: 2 },
-  { name: 'Q3', projects: 4, completed: 3 },
-  { name: 'Q4', projects: 3, completed: 3 },
+  { name: "Q1", projects: 2, completed: 1 },
+  { name: "Q2", projects: 3, completed: 2 },
+  { name: "Q3", projects: 4, completed: 3 },
+  { name: "Q4", projects: 3, completed: 3 },
 ];
 
 const taskStatusData = [
-  { name: 'Completed', value: 20, fill: '#22c55e' },
-  { name: 'In Progress', value: 15, fill: '#3b82f6' },
-  { name: 'Pending', value: 10, fill: '#f59e0b' },
+  { name: "Completed", value: 20, fill: "#22c55e" },
+  { name: "In Progress", value: 15, fill: "#3b82f6" },
+  { name: "Pending", value: 10, fill: "#f59e0b" },
 ];
 
 export default function ManagerDashboardPage() {
-  const [userEmail, setUserEmail] = useState('');
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
-    const email = sessionStorage.getItem('userEmail');
-    setUserEmail(email || 'pm@company.com');
+    const email = sessionStorage.getItem("userEmail");
+    setUserEmail(email || "pm@company.com");
   }, []);
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">Project Manager Dashboard</h1>
-        <p className="text-muted-foreground">
-          Your projects and team overview
-        </p>
+        <h1 className="text-3xl font-bold text-foreground mb-2">
+          TaskForge Dashboard
+        </h1>
+        <p className="text-muted-foreground">Your projects and team overview</p>
       </div>
 
       {/* Stats Cards - PM Specific View */}
@@ -59,7 +76,9 @@ export default function ManagerDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">4</div>
-            <p className="text-xs text-muted-foreground mt-1">Currently managing</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Currently managing
+            </p>
           </CardContent>
         </Card>
 
@@ -73,7 +92,9 @@ export default function ManagerDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">45</div>
-            <p className="text-xs text-muted-foreground mt-1">Assigned to team</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Assigned to team
+            </p>
           </CardContent>
         </Card>
 
@@ -81,13 +102,17 @@ export default function ManagerDashboardPage() {
         <Card>
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Completion Rate
+              </CardTitle>
               <TrendingUp size={20} className="text-primary" />
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">57%</div>
-            <Badge variant="success" className="mt-1">On track</Badge>
+            <Badge variant="success" className="mt-1">
+              On track
+            </Badge>
           </CardContent>
         </Card>
       </div>
@@ -103,7 +128,10 @@ export default function ManagerDashboardPage() {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={projectData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="var(--color-border)"
+                />
                 <XAxis dataKey="name" stroke="var(--color-muted-foreground)" />
                 <YAxis stroke="var(--color-muted-foreground)" />
                 <Tooltip />
@@ -153,19 +181,46 @@ export default function ManagerDashboardPage() {
         <CardContent>
           <div className="space-y-4">
             {[
-              { user: 'Sarah Chen', action: 'completed task', item: 'API Integration', time: '2 hours ago' },
-              { user: 'John Smith', action: 'updated status', item: 'Database Design', time: '4 hours ago' },
-              { user: 'Emily Davis', action: 'commented on task', item: 'UI Implementation', time: '6 hours ago' },
-              { user: 'Mike Johnson', action: 'submitted task', item: 'Testing Report', time: '1 day ago' },
+              {
+                user: "Sarah Chen",
+                action: "completed task",
+                item: "API Integration",
+                time: "2 hours ago",
+              },
+              {
+                user: "John Smith",
+                action: "updated status",
+                item: "Database Design",
+                time: "4 hours ago",
+              },
+              {
+                user: "Emily Davis",
+                action: "commented on task",
+                item: "UI Implementation",
+                time: "6 hours ago",
+              },
+              {
+                user: "Mike Johnson",
+                action: "submitted task",
+                item: "Testing Report",
+                time: "1 day ago",
+              },
             ].map((activity, index) => (
-              <div key={index} className="flex items-center justify-between py-2 border-b border-border last:border-0">
+              <div
+                key={index}
+                className="flex items-center justify-between py-2 border-b border-border last:border-0"
+              >
                 <div>
                   <p className="text-sm font-medium text-foreground">
-                    <span className="text-muted-foreground">{activity.user}</span>
-                    {' '}{activity.action}{' '}
+                    <span className="text-muted-foreground">
+                      {activity.user}
+                    </span>{" "}
+                    {activity.action}{" "}
                     <span className="font-medium">{activity.item}</span>
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">{activity.time}</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {activity.time}
+                  </p>
                 </div>
               </div>
             ))}

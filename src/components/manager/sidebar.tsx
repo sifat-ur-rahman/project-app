@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  LayoutDashboard, 
-  FolderOpen, 
-  CheckSquare, 
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  LayoutDashboard,
+  FolderOpen,
+  CheckSquare,
   BarChart3,
   LogOut,
   Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 /**
  * Manager (PM) Sidebar Navigation Component
- * 
+ *
  * PM users have limited management access:
  * - Dashboard overview
  * - Projects management (create, edit only - no delete)
@@ -31,29 +31,29 @@ export default function ManagerSidebar() {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   // Navigation items for PM (limited compared to admin)
   const navItems = [
     {
-      label: 'Dashboard',
-      href: '/manager/dashboard',
+      label: "Dashboard",
+      href: "/manager/dashboard",
       icon: LayoutDashboard,
     },
     {
-      label: 'Projects',
-      href: '/manager/projects',
+      label: "Projects",
+      href: "/manager/projects",
       icon: FolderOpen,
     },
     {
-      label: 'Tasks',
-      href: '/manager/tasks',
+      label: "Tasks",
+      href: "/manager/tasks",
       icon: CheckSquare,
     },
     {
-      label: 'Reports',
-      href: '/manager/reports',
+      label: "Reports",
+      href: "/manager/reports",
       icon: BarChart3,
     },
   ];
@@ -73,7 +73,7 @@ export default function ManagerSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
           transition-transform duration-300
           fixed lg:static
@@ -86,8 +86,10 @@ export default function ManagerSidebar() {
       >
         {/* Logo / Branding */}
         <div className="p-6 border-b border-border">
-          <h1 className="text-xl font-bold text-foreground">Project Manager</h1>
-          <p className="text-xs text-muted-foreground mt-1">Project Manager Panel</p>
+          <h1 className="text-xl font-bold text-foreground">TaskForge</h1>
+          <p className="text-xs text-muted-foreground mt-1">
+            Project Manager Panel
+          </p>
         </div>
 
         {/* Navigation Items */}
@@ -105,8 +107,8 @@ export default function ManagerSidebar() {
                   transition-colors duration-200
                   ${
                     active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-muted'
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground hover:bg-muted"
                   }
                 `}
               >

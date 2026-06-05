@@ -1,13 +1,19 @@
-'use client';
+"use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Settings, Database, Lock, Bell } from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Settings, Database, Lock, Bell } from "lucide-react";
 
 /**
  * Admin Settings Page
- * 
+ *
  * System configuration for administrators:
  * - Application settings
  * - User management
@@ -21,7 +27,9 @@ export default function AdminSettingsPage() {
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-foreground">System Settings</h1>
-        <p className="text-muted-foreground mt-1">Configure system-wide settings and preferences</p>
+        <p className="text-muted-foreground mt-1">
+          Configure system-wide settings and preferences
+        </p>
       </div>
 
       {/* General Settings */}
@@ -39,9 +47,11 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">Application Name</p>
-              <p className="text-sm text-muted-foreground">Project Manager</p>
+              <p className="text-sm text-muted-foreground">TaskForge</p>
             </div>
-            <Button variant="outline" size="sm">Edit</Button>
+            <Button variant="outline" size="sm">
+              Edit
+            </Button>
           </div>
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
@@ -53,9 +63,13 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">Maintenance Mode</p>
-              <p className="text-sm text-muted-foreground">Currently disabled</p>
+              <p className="text-sm text-muted-foreground">
+                Currently disabled
+              </p>
             </div>
-            <Button variant="outline" size="sm">Enable</Button>
+            <Button variant="outline" size="sm">
+              Enable
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -82,9 +96,13 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">Backup Status</p>
-              <p className="text-sm text-muted-foreground">Last backup: 2 hours ago</p>
+              <p className="text-sm text-muted-foreground">
+                Last backup: 2 hours ago
+              </p>
             </div>
-            <Button variant="outline" size="sm">Backup Now</Button>
+            <Button variant="outline" size="sm">
+              Backup Now
+            </Button>
           </div>
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
@@ -111,7 +129,9 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">SSL Certificate</p>
-              <p className="text-sm text-muted-foreground">Encrypted connections</p>
+              <p className="text-sm text-muted-foreground">
+                Encrypted connections
+              </p>
             </div>
             <Badge variant="success">Active</Badge>
           </div>
@@ -120,14 +140,20 @@ export default function AdminSettingsPage() {
               <p className="font-medium">Session Timeout</p>
               <p className="text-sm text-muted-foreground">30 minutes</p>
             </div>
-            <Button variant="outline" size="sm">Configure</Button>
+            <Button variant="outline" size="sm">
+              Configure
+            </Button>
           </div>
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">Two-Factor Auth</p>
-              <p className="text-sm text-muted-foreground">Currently disabled</p>
+              <p className="text-sm text-muted-foreground">
+                Currently disabled
+              </p>
             </div>
-            <Button variant="outline" size="sm">Enable</Button>
+            <Button variant="outline" size="sm">
+              Enable
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -147,16 +173,24 @@ export default function AdminSettingsPage() {
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">Email Notifications</p>
-              <p className="text-sm text-muted-foreground">Send alerts to admin</p>
+              <p className="text-sm text-muted-foreground">
+                Send alerts to admin
+              </p>
             </div>
-            <Button variant="outline" size="sm">Enabled</Button>
+            <Button variant="outline" size="sm">
+              Enabled
+            </Button>
           </div>
           <div className="flex items-center justify-between p-4 border border-border rounded">
             <div>
               <p className="font-medium">System Alerts</p>
-              <p className="text-sm text-muted-foreground">Errors and warnings</p>
+              <p className="text-sm text-muted-foreground">
+                Errors and warnings
+              </p>
             </div>
-            <Button variant="outline" size="sm">Configure</Button>
+            <Button variant="outline" size="sm">
+              Configure
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -168,10 +202,16 @@ export default function AdminSettingsPage() {
           <CardDescription>Irreversible actions</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <Button variant="outline" className="w-full text-destructive hover:text-destructive">
+          <Button
+            variant="outline"
+            className="w-full text-destructive hover:text-destructive"
+          >
             Clear All Cache
           </Button>
-          <Button variant="outline" className="w-full text-destructive hover:text-destructive">
+          <Button
+            variant="outline"
+            className="w-full text-destructive hover:text-destructive"
+          >
             Reset System
           </Button>
         </CardContent>

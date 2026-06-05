@@ -6,8 +6,8 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "Project Manager",
-  description: "Manage projects, tasks, and teams efficiently",
+  title: "TaskForge",
+  description: "Smart project, task, and team collaboration platform",
 
   icons: {
     icon: [

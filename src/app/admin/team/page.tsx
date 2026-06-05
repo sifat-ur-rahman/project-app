@@ -1,18 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Modal } from '@/components/ui/modal';
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { Select } from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2, Users } from 'lucide-react';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Modal } from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Select } from "@/components/ui/select";
+import { Plus, Search, Edit, Trash2, Users } from "lucide-react";
 
 /**
  * Admin Team Management Page
- * 
+ *
  * Full team management with all permissions:
  * - Add new team members
  * - Edit member details
@@ -25,60 +31,60 @@ interface TeamMember {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'pm' | 'member';
-  status: 'active' | 'inactive';
+  role: "admin" | "pm" | "member";
+  status: "active" | "inactive";
   joinDate: string;
   projects: number;
 }
 
 const initialMembers: TeamMember[] = [
   {
-    id: '1',
-    name: 'Sarah Chen',
-    email: 'sarah@company.com',
-    role: 'member',
-    status: 'active',
-    joinDate: '2024-01-15',
+    id: "1",
+    name: "Sarah Chen",
+    email: "sarah@company.com",
+    role: "member",
+    status: "active",
+    joinDate: "2024-01-15",
     projects: 3,
   },
   {
-    id: '2',
-    name: 'John Smith',
-    email: 'john@company.com',
-    role: 'pm',
-    status: 'active',
-    joinDate: '2023-06-20',
+    id: "2",
+    name: "John Smith",
+    email: "john@company.com",
+    role: "pm",
+    status: "active",
+    joinDate: "2023-06-20",
     projects: 2,
   },
   {
-    id: '3',
-    name: 'Emily Davis',
-    email: 'emily@company.com',
-    role: 'member',
-    status: 'active',
-    joinDate: '2024-03-10',
+    id: "3",
+    name: "Emily Davis",
+    email: "emily@company.com",
+    role: "member",
+    status: "active",
+    joinDate: "2024-03-10",
     projects: 4,
   },
 ];
 
 export default function AdminTeamPage() {
   const [members, setMembers] = useState(initialMembers);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    role: 'member' as const,
+    name: "",
+    email: "",
+    role: "member" as const,
   });
 
   const handleAddMember = () => {
     if (formData.name.trim() && formData.email.trim()) {
       if (editingId) {
-        setMembers(members.map(m => 
-          m.id === editingId ? { ...m, ...formData } : m
-        ));
+        setMembers(
+          members.map((m) => (m.id === editingId ? { ...m, ...formData } : m)),
+        );
         setEditingId(null);
       } else {
         const newMember: TeamMember = {
@@ -86,13 +92,13 @@ export default function AdminTeamPage() {
           name: formData.name,
           email: formData.email,
           role: formData.role,
-          status: 'active',
-          joinDate: new Date().toISOString().split('T')[0],
+          status: "active",
+          joinDate: new Date().toISOString().split("T")[0],
           projects: 0,
         };
         setMembers([newMember, ...members]);
       }
-      setFormData({ name: '', email: '', role: 'member' });
+      setFormData({ name: "", email: "", role: "member" });
       setIsModalOpen(false);
     }
   };
@@ -102,32 +108,36 @@ export default function AdminTeamPage() {
     setFormData({
       name: member.name,
       email: member.email,
-      role: member.role,
+      role:
+        member.role === "admin" || member.role === "pm"
+          ? "member"
+          : member.role,
     });
     setIsModalOpen(true);
   };
 
   const handleDeleteMember = (id: string) => {
-    setMembers(members.filter(m => m.id !== id));
+    setMembers(members.filter((m) => m.id !== id));
     setDeleteConfirm(null);
   };
 
-  const filteredMembers = members.filter(m =>
-    m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    m.role.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMembers = members.filter(
+    (m) =>
+      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.role.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case 'admin':
-        return 'destructive';
-      case 'pm':
-        return 'default';
-      case 'member':
-        return 'secondary';
+      case "admin":
+        return "destructive";
+      case "pm":
+        return "default";
+      case "member":
+        return "secondary";
       default:
-        return 'default';
+        return "default";
     }
   };
 
@@ -136,13 +146,17 @@ export default function AdminTeamPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Team Management</h1>
-          <p className="text-muted-foreground mt-1">Manage all team members and their roles</p>
+          <h1 className="text-3xl font-bold text-foreground">
+            Team Management
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            Manage all team members and their roles
+          </p>
         </div>
         <Button
           onClick={() => {
             setEditingId(null);
-            setFormData({ name: '', email: '', role: 'member' });
+            setFormData({ name: "", email: "", role: "member" });
             setIsModalOpen(true);
           }}
           className="flex items-center gap-2"
@@ -168,13 +182,17 @@ export default function AdminTeamPage() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Admins</p>
-            <p className="text-2xl font-bold">{members.filter(m => m.role === 'admin').length}</p>
+            <p className="text-2xl font-bold">
+              {members.filter((m) => m.role === "admin").length}
+            </p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
             <p className="text-sm text-muted-foreground">Active Now</p>
-            <p className="text-2xl font-bold">{members.filter(m => m.status === 'active').length}</p>
+            <p className="text-2xl font-bold">
+              {members.filter((m) => m.status === "active").length}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -182,7 +200,10 @@ export default function AdminTeamPage() {
       {/* Search Bar */}
       <div className="flex gap-2">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={20}
+          />
           <Input
             placeholder="Search members..."
             value={searchQuery}
@@ -209,14 +230,20 @@ export default function AdminTeamPage() {
             {filteredMembers.map((member) => (
               <tr key={member.id} className="hover:bg-muted/50">
                 <td className="p-4 font-medium">{member.name}</td>
-                <td className="p-4 text-sm text-muted-foreground">{member.email}</td>
+                <td className="p-4 text-sm text-muted-foreground">
+                  {member.email}
+                </td>
                 <td className="p-4">
                   <Badge variant={getRoleColor(member.role) as any}>
                     {member.role}
                   </Badge>
                 </td>
                 <td className="p-4">
-                  <Badge variant={member.status === 'active' ? 'success' : 'secondary'}>
+                  <Badge
+                    variant={
+                      member.status === "active" ? "success" : "secondary"
+                    }
+                  >
                     {member.status}
                   </Badge>
                 </td>
@@ -260,9 +287,9 @@ export default function AdminTeamPage() {
         onClose={() => {
           setIsModalOpen(false);
           setEditingId(null);
-          setFormData({ name: '', email: '', role: 'member' });
+          setFormData({ name: "", email: "", role: "member" });
         }}
-        title={editingId ? 'Edit Member' : 'Add New Member'}
+        title={editingId ? "Edit Member" : "Add New Member"}
         actions={
           <>
             <Button
@@ -270,13 +297,13 @@ export default function AdminTeamPage() {
               onClick={() => {
                 setIsModalOpen(false);
                 setEditingId(null);
-                setFormData({ name: '', email: '', role: 'member' });
+                setFormData({ name: "", email: "", role: "member" });
               }}
             >
               Cancel
             </Button>
             <Button onClick={handleAddMember}>
-              {editingId ? 'Update' : 'Add'}
+              {editingId ? "Update" : "Add"}
             </Button>
           </>
         }
@@ -292,17 +319,21 @@ export default function AdminTeamPage() {
             label="Email"
             type="email"
             value={formData.email}
-            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
             placeholder="Enter email address"
           />
           <Select
             label="Role"
             value={formData.role}
-            onChange={(e) => setFormData({ ...formData, role: e.target.value as any })}
+            onChange={(e) =>
+              setFormData({ ...formData, role: e.target.value as any })
+            }
             options={[
-              { value: 'member', label: 'Team Member' },
-              { value: 'pm', label: 'Project Manager' },
-              { value: 'admin', label: 'Administrator' },
+              { value: "member", label: "Team Member" },
+              { value: "pm", label: "Project Manager" },
+              { value: "admin", label: "Administrator" },
             ]}
           />
         </div>

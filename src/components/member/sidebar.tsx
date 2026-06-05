@@ -1,20 +1,14 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  LogOut,
-  Menu,
-  X
-} from 'lucide-react';
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { LayoutDashboard, CheckSquare, LogOut, Menu, X } from "lucide-react";
 
 /**
  * Member Sidebar Navigation Component
- * 
+ *
  * Team member users have minimal access:
  * - Dashboard (personal overview)
  * - My Tasks (can view and edit only assigned tasks)
@@ -27,19 +21,19 @@ export default function MemberSidebar() {
 
   const handleLogout = () => {
     sessionStorage.clear();
-    router.push('/auth/login');
+    router.push("/auth/login");
   };
 
   // Navigation items for team members (minimal access)
   const navItems = [
     {
-      label: 'Dashboard',
-      href: '/member/dashboard',
+      label: "Dashboard",
+      href: "/member/dashboard",
       icon: LayoutDashboard,
     },
     {
-      label: 'My Tasks',
-      href: '/member/tasks',
+      label: "My Tasks",
+      href: "/member/tasks",
       icon: CheckSquare,
     },
   ];
@@ -59,7 +53,7 @@ export default function MemberSidebar() {
       {/* Sidebar */}
       <aside
         className={`
-          ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+          ${isOpen ? "translate-x-0" : "-translate-x-full"}
           lg:translate-x-0
           transition-transform duration-300
           fixed lg:static
@@ -72,7 +66,7 @@ export default function MemberSidebar() {
       >
         {/* Logo / Branding */}
         <div className="p-6 border-b border-border">
-          <h1 className="text-xl font-bold text-foreground">Project Manager</h1>
+          <h1 className="text-xl font-bold text-foreground">TaskForge</h1>
           <p className="text-xs text-muted-foreground mt-1">Team Member</p>
         </div>
 
@@ -91,8 +85,8 @@ export default function MemberSidebar() {
                   transition-colors duration-200
                   ${
                     active
-                      ? 'bg-primary text-primary-foreground'
-                      : 'text-foreground hover:bg-muted'
+                      ? "bg-primary text-primary-foreground"
+                      : "text-foreground hover:bg-muted"
                   }
                 `}
               >

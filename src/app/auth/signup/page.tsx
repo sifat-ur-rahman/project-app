@@ -1,36 +1,36 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!email || !password || !confirmPassword || !fullName) {
-      setError('Please fill in all fields');
+      setError("Please fill in all fields");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError("Passwords do not match");
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Password must be at least 6 characters");
       return;
     }
 
@@ -38,14 +38,14 @@ export default function SignupPage() {
 
     try {
       // Placeholder for actual auth logic
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       // Simulate successful signup
-      sessionStorage.setItem('userEmail', email);
-      sessionStorage.setItem('userRole', 'member');
-      router.push('/dashboard');
+      sessionStorage.setItem("userEmail", email);
+      sessionStorage.setItem("userRole", "member");
+      router.push("/dashboard");
     } catch (err) {
-      setError('Signup failed. Please try again.');
+      setError("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -56,12 +56,15 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Project Manager</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">TaskForge</h1>
           <p className="text-muted-foreground">Create your account</p>
         </div>
 
         {/* Signup Form */}
-        <form onSubmit={handleSubmit} className="bg-card rounded-lg border border-border p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="bg-card rounded-lg border border-border p-6 space-y-4"
+        >
           {error && (
             <div className="p-3 bg-destructive/10 border border-destructive/30 rounded text-destructive text-sm">
               {error}
@@ -112,7 +115,7 @@ export default function SignupPage() {
 
         {/* Sign In Link */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link href="/auth/login" className="text-primary hover:underline">
             Sign in
           </Link>
