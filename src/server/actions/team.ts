@@ -1,15 +1,17 @@
-'use server';
+"use server";
 
-import { connectDB } from '../db';
-import TeamMember from '../models/TeamMember';
-import User from '../models/User';
-import { Types } from 'mongoose';
+import { connectDB } from "../db";
+import TeamMember from "../models/TeamMember";
+import User from "../models/User";
+import bcrypt from "bcrypt";
 
 export async function getAllTeamMembers() {
   try {
     await connectDB();
 
-    const members = await TeamMember.find().populate('user', 'name email').populate('assignedProjects', 'name');
+    const members = await TeamMember.find()
+      .populate("user", "name email")
+      .populate("assignedProjects", "name");
 
     return {
       success: true,
@@ -26,10 +28,10 @@ export async function getAllTeamMembers() {
       })),
     };
   } catch (error) {
-    console.error('Get team members error:', error);
+    console.error("Get team members error:", error);
     return {
       success: false,
-      error: 'Failed to fetch team members',
+      error: "Failed to fetch team members",
       members: [],
     };
   }
@@ -39,12 +41,15 @@ export async function getTeamMemberByEmail(email: string) {
   try {
     await connectDB();
 
-    const member = await TeamMember.findOne({ email }).populate('assignedProjects', 'name');
+    const member = await TeamMember.findOne({ email }).populate(
+      "assignedProjects",
+      "name",
+    );
 
     if (!member) {
       return {
         success: false,
-        error: 'Team member not found',
+        error: "Team member not found",
       };
     }
 
@@ -62,10 +67,10 @@ export async function getTeamMemberByEmail(email: string) {
       },
     };
   } catch (error) {
-    console.error('Get team member error:', error);
+    console.error("Get team member error:", error);
     return {
       success: false,
-      error: 'Failed to fetch team member',
+      error: "Failed to fetch team member",
     };
   }
 }
@@ -80,11 +85,13 @@ export async function createTeamMember(data: {
   try {
     await connectDB();
 
+    const salt = await bcrypt.genSalt(12);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
     // Create user first
     const user = await User.create({
       name: data.name,
       email: data.email,
-      password: data.password,
+      password: hashedPassword,
       role: data.role,
       department: data.department,
     });
@@ -108,10 +115,10 @@ export async function createTeamMember(data: {
       },
     };
   } catch (error) {
-    console.error('Create team member error:', error);
+    console.error("Create team member error:", error);
     return {
       success: false,
-      error: 'Failed to create team member',
+      error: "Failed to create team member",
     };
   }
 }
@@ -123,17 +130,19 @@ export async function updateTeamMember(
     role?: string;
     department?: string;
     status?: string;
-  }
+  },
 ) {
   try {
     await connectDB();
 
-    const member = await TeamMember.findByIdAndUpdate(memberId, data, { new: true });
+    const member = await TeamMember.findByIdAndUpdate(memberId, data, {
+      new: true,
+    });
 
     if (!member) {
       return {
         success: false,
-        error: 'Team member not found',
+        error: "Team member not found",
       };
     }
 
@@ -147,10 +156,10 @@ export async function updateTeamMember(
       },
     };
   } catch (error) {
-    console.error('Update team member error:', error);
+    console.error("Update team member error:", error);
     return {
       success: false,
-      error: 'Failed to update team member',
+      error: "Failed to update team member",
     };
   }
 }
@@ -164,7 +173,7 @@ export async function deleteTeamMember(memberId: string) {
     if (!member) {
       return {
         success: false,
-        error: 'Team member not found',
+        error: "Team member not found",
       };
     }
 
@@ -175,13 +184,13 @@ export async function deleteTeamMember(memberId: string) {
 
     return {
       success: true,
-      message: 'Team member deleted successfully',
+      message: "Team member deleted successfully",
     };
   } catch (error) {
-    console.error('Delete team member error:', error);
+    console.error("Delete team member error:", error);
     return {
       success: false,
-      error: 'Failed to delete team member',
+      error: "Failed to delete team member",
     };
   }
 }
@@ -203,10 +212,10 @@ export async function getTeamMembersByRole(role: string) {
       })),
     };
   } catch (error) {
-    console.error('Get team members by role error:', error);
+    console.error("Get team members by role error:", error);
     return {
       success: false,
-      error: 'Failed to fetch team members',
+      error: "Failed to fetch team members",
       members: [],
     };
   }
@@ -215,7 +224,7 @@ export async function getTeamMembersByRole(role: string) {
 export async function updateTeamMemberStats(
   memberId: string,
   tasksAssigned: number,
-  tasksCompleted: number
+  tasksCompleted: number,
 ) {
   try {
     await connectDB();
@@ -223,13 +232,13 @@ export async function updateTeamMemberStats(
     const member = await TeamMember.findByIdAndUpdate(
       memberId,
       { tasksAssigned, tasksCompleted },
-      { new: true }
+      { new: true },
     );
 
     if (!member) {
       return {
         success: false,
-        error: 'Team member not found',
+        error: "Team member not found",
       };
     }
 
@@ -242,10 +251,10 @@ export async function updateTeamMemberStats(
       },
     };
   } catch (error) {
-    console.error('Update team member stats error:', error);
+    console.error("Update team member stats error:", error);
     return {
       success: false,
-      error: 'Failed to update stats',
+      error: "Failed to update stats",
     };
   }
 }
