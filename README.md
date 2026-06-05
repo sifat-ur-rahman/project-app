@@ -1,4 +1,4 @@
-# Project Management Application
+# Project Management Application TaskForge
 
 A modern, full-featured project management system built with **Next.js 16**, **React 19**, **MongoDB**, and **Tailwind CSS**. Features role-based access control, real-time task management, team collaboration, and comprehensive analytics with a production-ready backend.
 
