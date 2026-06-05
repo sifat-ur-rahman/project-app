@@ -20,7 +20,6 @@ export async function loginUser(email: string, password: string) {
       };
     }
 
-    // Simple password comparison (in production, use bcrypt)
     if (!user.password || !(await bcrypt.compare(password, user.password))) {
       return {
         success: false,
@@ -50,11 +49,13 @@ export async function loginUser(email: string, password: string) {
     const token = jwt.sign({ user: cleanUserObject }, secret, {
       expiresIn: "30d",
     });
+
     if (!token) {
       new Error("Token not found");
     }
 
     (await cookies()).set("task_forge_token", token, { maxAge: 2592000 });
+
     return {
       success: true,
       user: {
