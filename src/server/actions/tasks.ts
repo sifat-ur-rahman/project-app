@@ -273,3 +273,29 @@ export async function updateTaskStatus(taskId: string, status: string) {
     };
   }
 }
+
+export async function getTasksByAssigneeEmail(email: string) {
+  try {
+    await connectDB();
+
+    const tasks = await Task.find({ assigneeEmail: email });
+
+    return {
+      success: true,
+      tasks: tasks.map((task) => ({
+        id: task._id.toString(),
+        title: task.title,
+        status: task.status,
+        priority: task.priority,
+        assigneeEmail: task.assigneeEmail,
+      })),
+    };
+  } catch (error) {
+    console.error("Get tasks by project error:", error);
+    return {
+      success: false,
+      error: "Failed to fetch tasks",
+      tasks: [],
+    };
+  }
+}
