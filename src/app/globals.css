@@ -249,3 +249,12 @@
   margin-right: 8px;
   vertical-align: middle;
 }
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: auto;
+}
