@@ -19,6 +19,7 @@ import {
   getAllProjects,
   createProject,
   updateProject,
+  getProjectsByOwner,
 } from "@/server/actions/projects";
 
 /**
@@ -59,14 +60,11 @@ export default function ManagerProjectsPage() {
 
   const fetchProjects = async () => {
     setIsLoading(true);
+    const email = sessionStorage.getItem("userEmail");
     try {
-      const result = await getAllProjects();
-      if (result.success && userEmail) {
-        // Filter projects owned by current PM
-        const myProjects = (result.projects || []).filter(
-          (p) => p.owner?.email === userEmail,
-        );
-        setProjects(myProjects);
+      const result = await getProjectsByOwner(email || "");
+      if (result.success) {
+        setProjects(result.projects || []);
       }
     } catch (err) {
       setError("Failed to load projects");
@@ -77,6 +75,7 @@ export default function ManagerProjectsPage() {
 
   const handleSaveProject = async () => {
     if (!formData.name.trim()) return;
+    const userEmail = sessionStorage.getItem("userEmail");
     setIsLoading(true);
     try {
       if (editingId) {
@@ -92,7 +91,7 @@ export default function ManagerProjectsPage() {
         await createProject({
           name: formData.name,
           description: formData.description,
-          ownerEmail: userEmail,
+          ownerEmail: userEmail || "",
           status: formData.status,
           priority: formData.priority,
           startDate: formData.startDate,
@@ -223,7 +222,7 @@ export default function ManagerProjectsPage() {
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setEditingId(project._id);
+                      setEditingId(project.id);
                       setFormData({
                         name: project.name,
                         description: project.description || "",
@@ -308,33 +307,35 @@ export default function ManagerProjectsPage() {
             rows={4}
             disabled={isLoading}
           />
-          <Select
-            label="Status"
-            value={formData.status}
-            onChange={(e) =>
-              setFormData({ ...formData, status: e.target.value })
-            }
-            options={[
-              { value: "planning", label: "Planning" },
-              { value: "in-progress", label: "In Progress" },
-              { value: "on-hold", label: "On Hold" },
-              { value: "completed", label: "Completed" },
-            ]}
-            disabled={isLoading}
-          />
-          <Select
-            label="Priority"
-            value={formData.priority}
-            onChange={(e) =>
-              setFormData({ ...formData, priority: e.target.value })
-            }
-            options={[
-              { value: "low", label: "Low" },
-              { value: "medium", label: "Medium" },
-              { value: "high", label: "High" },
-            ]}
-            disabled={isLoading}
-          />
+          <div className="flex gap-4">
+            <Select
+              label="Status"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+              options={[
+                { value: "planning", label: "Planning" },
+                { value: "in-progress", label: "In Progress" },
+                { value: "on-hold", label: "On Hold" },
+                { value: "completed", label: "Completed" },
+              ]}
+              disabled={isLoading}
+            />
+            <Select
+              label="Priority"
+              value={formData.priority}
+              onChange={(e) =>
+                setFormData({ ...formData, priority: e.target.value })
+              }
+              options={[
+                { value: "low", label: "Low" },
+                { value: "medium", label: "Medium" },
+                { value: "high", label: "High" },
+              ]}
+              disabled={isLoading}
+            />
+          </div>
           <div className="flex gap-4">
             <Input
               label="Start Date"

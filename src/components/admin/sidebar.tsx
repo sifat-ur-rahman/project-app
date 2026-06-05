@@ -64,11 +64,6 @@ export default function AdminSidebar() {
       href: "/admin/analytics",
       icon: BarChart3,
     },
-    {
-      label: "Settings",
-      href: "/admin/settings",
-      icon: Settings,
-    },
   ];
 
   const isActive = (href: string) => pathname === href;

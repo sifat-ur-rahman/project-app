@@ -3,26 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  CheckCircle,
-  Users,
-  BarChart3,
-  Zap,
-  ArrowRight,
-  Github,
-  Linkedin,
-  Twitter,
-} from "lucide-react";
+import { CheckCircle, Users, BarChart3, Zap, ArrowRight } from "lucide-react";
 
 export default function Page() {
   const router = useRouter();
-
-  useEffect(() => {
-    const userEmail = sessionStorage.getItem("userEmail");
-    if (userEmail) {
-      router.push("/auth/login");
-    }
-  }, [router]);
 
   const features = [
     {
@@ -63,6 +47,19 @@ export default function Page() {
     },
   ];
 
+  const handleGetStarted = () => {
+    const userRole = sessionStorage.getItem("userRole");
+    if (userRole == "admin") {
+      router.push("/admin/dashboard");
+    } else if (userRole == "pm") {
+      router.push("/manager/dashboard");
+    } else if (userRole == "member") {
+      router.push("/member/dashboard");
+    } else {
+      router.push("/auth/login");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Navigation */}
@@ -82,8 +79,8 @@ export default function Page() {
               Login
             </Button>
             <Button
-              onClick={() => router.push("/auth/signup")}
-              className="btn-primary-glow rounded-xl gap-2 font-medium transition-all duration-300"
+              onClick={handleGetStarted}
+              className="btn-primary-glow text-white rounded-xl gap-2 font-medium transition-all duration-300"
             >
               Get Started <ArrowRight className="w-3.5 h-3.5" />
             </Button>
@@ -112,10 +109,10 @@ export default function Page() {
           <div className="animate-fade-up-3 flex flex-col sm:flex-row gap-3 justify-center mb-20">
             <Button
               size="lg"
-              onClick={() => router.push("/auth/login")}
-              className="btn-primary-glow rounded-xl gap-2 font-semibold px-8 transition-all duration-300 h-12"
+              onClick={handleGetStarted}
+              className="btn-primary-glow text-white rounded-xl gap-2 font-semibold px-8 transition-all duration-300 h-12"
             >
-              Start Building <ArrowRight className="w-4 h-4" />
+              Get Started <ArrowRight className="w-4 h-4" />
             </Button>
             <Button
               size="lg"

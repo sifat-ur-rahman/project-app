@@ -22,7 +22,7 @@ import {
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
-import { getAllProjects } from "@/server/actions/projects";
+import { getAllProjects, getProjectsByOwner } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
 
 /**
@@ -50,12 +50,9 @@ export default function ManagerReportsPage() {
   const fetchData = async (pmEmail: string) => {
     setIsLoading(true);
     try {
-      const projectsResult = await getAllProjects();
+      const projectsResult = await getProjectsByOwner(pmEmail || ""); // getAllProjects);
       if (projectsResult.success) {
-        const myProjects = (projectsResult.projects || []).filter(
-          (p) => p.owner?.email === pmEmail,
-        );
-        setProjects(myProjects);
+        setProjects(projectsResult.projects || []);
       }
       const tasksResult = await getAllTasks();
       if (tasksResult.success) {
@@ -68,7 +65,7 @@ export default function ManagerReportsPage() {
     }
   };
 
-  const myProjectIds = projects.map((p) => p._id);
+  const myProjectIds = projects.map((p) => p.id);
   const myTasks = tasks.filter((t) => myProjectIds.includes(t.projectId));
 
   const tasksByStatus = {

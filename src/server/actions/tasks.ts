@@ -22,6 +22,7 @@ export async function getAllTasks() {
         title: task.title,
         description: task.description,
         projectName: task.projectName,
+        projectId: task.project._id.toString(),
         assigneeEmail: task.assigneeEmail,
         status: task.status,
         priority: task.priority,

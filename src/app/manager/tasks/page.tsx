@@ -23,7 +23,7 @@ import {
   updateTaskStatus,
 } from "@/server/actions/tasks";
 import { getAllTeamMembers } from "@/server/actions/team";
-import { getAllProjects } from "@/server/actions/projects";
+import { getAllProjects, getProjectsByOwner } from "@/server/actions/projects";
 
 /**
  * Manager (PM) Tasks Management Page
@@ -61,20 +61,17 @@ export default function ManagerTasksPage() {
   }, []);
 
   const fetchData = async () => {
+    const userEmail = sessionStorage.getItem("userEmail");
     setIsLoading(true);
     try {
       const [tasksR, projectsR, teamR] = await Promise.all([
         getAllTasks(),
-        getAllProjects(),
+        getProjectsByOwner(userEmail || ""),
         getAllTeamMembers(),
       ]);
       if (tasksR.success) setTasks(tasksR.tasks || []);
       if (projectsR.success && userEmail) {
-        setProjects(
-          (projectsR.projects || []).filter(
-            (p) => p.owner?.email === userEmail,
-          ),
-        );
+        setProjects(projectsR.projects);
       }
       if (teamR.success) setTeamMembers(teamR.members || []);
     } finally {
@@ -135,7 +132,7 @@ export default function ManagerTasksPage() {
   };
 
   // Filter tasks for PM's projects only
-  const myProjectIds = projects.map((p) => p._id);
+  const myProjectIds = projects.map((p) => p.id);
   const myTasks = tasks
     .filter((t) => myProjectIds.includes(t.projectId))
     .filter((t) => t.title.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -234,7 +231,7 @@ export default function ManagerTasksPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => {
-                        setEditingId(task._id);
+                        setEditingId(task.id);
                         setFormData({
                           title: task.title,
                           description: task.description || "",
@@ -299,52 +296,56 @@ export default function ManagerTasksPage() {
             rows={3}
             disabled={isLoading}
           />
-          <Select
-            label="Project"
-            value={formData.projectId}
-            onChange={(e) =>
-              setFormData({ ...formData, projectId: e.target.value })
-            }
-            options={[
-              { value: "", label: "Select..." },
-              ...projects.map((p) => ({ value: p.id, label: p.name })),
-            ]}
-            disabled={isLoading}
-          />
-          <Select
-            label="Assignee"
-            value={formData.assigneeEmail}
-            onChange={(e) =>
-              setFormData({ ...formData, assigneeEmail: e.target.value })
-            }
-            options={[
-              { value: "", label: "Unassigned" },
-              ...teamMembers.map((m) => ({ value: m.email, label: m.name })),
-            ]}
-            disabled={isLoading}
-          />
-          <Select
-            label="Priority"
-            value={formData.priority}
-            onChange={(e) =>
-              setFormData({ ...formData, priority: e.target.value })
-            }
-            options={[
-              { value: "low", label: "Low" },
-              { value: "medium", label: "Medium" },
-              { value: "high", label: "High" },
-            ]}
-            disabled={isLoading}
-          />
-          <Input
-            label="Due Date"
-            type="date"
-            value={formData.dueDate}
-            onChange={(e) =>
-              setFormData({ ...formData, dueDate: e.target.value })
-            }
-            disabled={isLoading}
-          />
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Project"
+              value={formData.projectId}
+              onChange={(e) =>
+                setFormData({ ...formData, projectId: e.target.value })
+              }
+              options={[
+                { value: "", label: "Select..." },
+                ...projects.map((p) => ({ value: p.id, label: p.name })),
+              ]}
+              disabled={isLoading}
+            />
+            <Select
+              label="Assignee"
+              value={formData.assigneeEmail}
+              onChange={(e) =>
+                setFormData({ ...formData, assigneeEmail: e.target.value })
+              }
+              options={[
+                { value: "", label: "Unassigned" },
+                ...teamMembers.map((m) => ({ value: m.email, label: m.name })),
+              ]}
+              disabled={isLoading}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Priority"
+              value={formData.priority}
+              onChange={(e) =>
+                setFormData({ ...formData, priority: e.target.value })
+              }
+              options={[
+                { value: "low", label: "Low" },
+                { value: "medium", label: "Medium" },
+                { value: "high", label: "High" },
+              ]}
+              disabled={isLoading}
+            />
+            <Input
+              label="Due Date"
+              type="date"
+              value={formData.dueDate}
+              onChange={(e) =>
+                setFormData({ ...formData, dueDate: e.target.value })
+              }
+              disabled={isLoading}
+            />
+          </div>
         </div>
       </Modal>
     </div>
