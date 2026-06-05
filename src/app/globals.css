@@ -1,9 +1,9 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
 
 @theme inline {
-  --font-sans: 'Geist', system-ui, sans-serif;
-  --font-mono: 'Geist Mono', monospace;
+  --font-sans: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
   --color-background: #ffffff;
   --color-foreground: #1a1a1a;
   --color-card: #f8f9fa;
@@ -56,4 +56,196 @@
     --color-input: #1e293b;
     --color-ring: #3b82f6;
   }
+}
+
+* {
+  font-family: "DM Sans", sans-serif;
+}
+.font-display {
+  font-family: "Syne", sans-serif;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-up-1 {
+  animation: fade-up 0.7s 0.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-up-2 {
+  animation: fade-up 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-up-3 {
+  animation: fade-up 0.7s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-up-4 {
+  animation: fade-up 0.7s 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.animate-fade-in {
+  animation: fade-in 1s 0.5s both;
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradient-text {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--foreground)) 0%,
+    hsl(var(--primary)) 50%,
+    hsl(var(--foreground)) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.mesh-bg {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(
+      ellipse 80% 60% at 20% -10%,
+      hsl(var(--primary) / 0.08) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 80% 110%,
+      hsl(var(--primary) / 0.05) 0%,
+      transparent 60%
+    );
+}
+
+.card-hover {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px hsl(var(--primary) / 0.15);
+  border-color: hsl(var(--primary) / 0.4);
+}
+
+.nav-blur {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: hsl(var(--background) / 0.7);
+}
+
+.stat-card {
+  background: linear-gradient(
+    135deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted) / 0.5) 100%
+  );
+  border: 1px solid hsl(var(--border));
+  transition: all 0.3s ease;
+}
+.stat-card:hover {
+  border-color: hsl(var(--primary) / 0.4);
+  background: linear-gradient(
+    135deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--primary) / 0.05) 100%
+  );
+}
+
+.btn-primary-glow:hover {
+  box-shadow: 0 0 24px hsl(var(--primary) / 0.4);
+}
+
+.divider-gradient {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--border)),
+    transparent
+  );
+  height: 1px;
+}
+
+.avatar-ring {
+  position: relative;
+}
+.avatar-ring::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)),
+    hsl(var(--primary) / 0.3)
+  );
+  z-index: -1;
+}
+
+.capability-item {
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  transition: all 0.25s ease;
+}
+.capability-item:hover {
+  border-color: hsl(var(--primary) / 0.3);
+  background: hsl(var(--primary) / 0.03);
+}
+.capability-item h4::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  margin-right: 8px;
+  vertical-align: middle;
 }
