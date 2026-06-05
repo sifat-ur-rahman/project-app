@@ -1,14 +1,19 @@
-'use server';
+"use server";
 
-import { connectDB } from '../db';
-import Task from '../models/Task';
-import { Types } from 'mongoose';
+import { revalidatePath } from "next/cache";
+import { connectDB } from "../db";
+import Project from "../models/Project";
+import Task from "../models/Task";
+import { Types } from "mongoose";
 
 export async function getAllTasks() {
   try {
     await connectDB();
 
-    const tasks = await Task.find().populate('assignee', 'name email').populate('project', 'name');
+    const tasks = await Task.find()
+      .populate("assignee", "name email")
+      .populate("project", "name")
+      .sort({ createdAt: -1 });
 
     return {
       success: true,
@@ -25,10 +30,10 @@ export async function getAllTasks() {
       })),
     };
   } catch (error) {
-    console.error('Get tasks error:', error);
+    console.error("Get tasks error:", error);
     return {
       success: false,
-      error: 'Failed to fetch tasks',
+      error: "Failed to fetch tasks",
       tasks: [],
     };
   }
@@ -38,12 +43,14 @@ export async function getTaskById(taskId: string) {
   try {
     await connectDB();
 
-    const task = await Task.findById(taskId).populate('assignee', 'name email').populate('project', 'name');
+    const task = await Task.findById(taskId)
+      .populate("assignee", "name email")
+      .populate("project", "name");
 
     if (!task) {
       return {
         success: false,
-        error: 'Task not found',
+        error: "Task not found",
       };
     }
 
@@ -63,10 +70,10 @@ export async function getTaskById(taskId: string) {
       },
     };
   } catch (error) {
-    console.error('Get task error:', error);
+    console.error("Get task error:", error);
     return {
       success: false,
-      error: 'Failed to fetch task',
+      error: "Failed to fetch task",
     };
   }
 }
@@ -74,7 +81,7 @@ export async function getTaskById(taskId: string) {
 export async function createTask(data: {
   title: string;
   description: string;
-  projectName: string;
+  projectName?: string;
   projectId: string;
   assigneeEmail: string;
   status: string;
@@ -84,6 +91,12 @@ export async function createTask(data: {
 }) {
   try {
     await connectDB();
+    console.log("createTask server", data);
+    const project = await Project.findById(data.projectId).lean();
+
+    if (project) {
+      data.projectName = project.name;
+    }
 
     const task = await Task.create({
       ...data,
@@ -91,7 +104,7 @@ export async function createTask(data: {
       assignee: new Types.ObjectId(),
       createdBy: new Types.ObjectId(),
     });
-
+    revalidatePath("/");
     return {
       success: true,
       task: {
@@ -101,10 +114,10 @@ export async function createTask(data: {
       },
     };
   } catch (error) {
-    console.error('Create task error:', error);
+    console.error("Create task error:", error);
     return {
       success: false,
-      error: 'Failed to create task',
+      error: "Failed to create task",
     };
   }
 }
@@ -118,7 +131,7 @@ export async function updateTask(
     priority?: string;
     dueDate?: string;
     assigneeEmail?: string;
-  }
+  },
 ) {
   try {
     await connectDB();
@@ -128,7 +141,7 @@ export async function updateTask(
     if (!task) {
       return {
         success: false,
-        error: 'Task not found',
+        error: "Task not found",
       };
     }
 
@@ -141,10 +154,10 @@ export async function updateTask(
       },
     };
   } catch (error) {
-    console.error('Update task error:', error);
+    console.error("Update task error:", error);
     return {
       success: false,
-      error: 'Failed to update task',
+      error: "Failed to update task",
     };
   }
 }
@@ -158,19 +171,19 @@ export async function deleteTask(taskId: string) {
     if (!task) {
       return {
         success: false,
-        error: 'Task not found',
+        error: "Task not found",
       };
     }
 
     return {
       success: true,
-      message: 'Task deleted successfully',
+      message: "Task deleted successfully",
     };
   } catch (error) {
-    console.error('Delete task error:', error);
+    console.error("Delete task error:", error);
     return {
       success: false,
-      error: 'Failed to delete task',
+      error: "Failed to delete task",
     };
   }
 }
@@ -192,10 +205,10 @@ export async function getTasksByProject(projectId: string) {
       })),
     };
   } catch (error) {
-    console.error('Get tasks by project error:', error);
+    console.error("Get tasks by project error:", error);
     return {
       success: false,
-      error: 'Failed to fetch tasks',
+      error: "Failed to fetch tasks",
       tasks: [],
     };
   }
@@ -219,10 +232,10 @@ export async function getTasksByAssignee(assigneeEmail: string) {
       })),
     };
   } catch (error) {
-    console.error('Get tasks by assignee error:', error);
+    console.error("Get tasks by assignee error:", error);
     return {
       success: false,
-      error: 'Failed to fetch tasks',
+      error: "Failed to fetch tasks",
       tasks: [],
     };
   }
@@ -232,12 +245,16 @@ export async function updateTaskStatus(taskId: string, status: string) {
   try {
     await connectDB();
 
-    const task = await Task.findByIdAndUpdate(taskId, { status }, { new: true });
+    const task = await Task.findByIdAndUpdate(
+      taskId,
+      { status },
+      { new: true },
+    );
 
     if (!task) {
       return {
         success: false,
-        error: 'Task not found',
+        error: "Task not found",
       };
     }
 
@@ -249,10 +266,10 @@ export async function updateTaskStatus(taskId: string, status: string) {
       },
     };
   } catch (error) {
-    console.error('Update task status error:', error);
+    console.error("Update task status error:", error);
     return {
       success: false,
-      error: 'Failed to update task status',
+      error: "Failed to update task status",
     };
   }
 }

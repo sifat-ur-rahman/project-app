@@ -1,109 +1,149 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Modal } from '@/components/ui/modal';
-import { ConfirmDialog } from '@/components/ui/confirm-dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Modal } from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
+import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import {
+  getAllProjects,
+  createProject,
+  updateProject,
+  deleteProject,
+} from "@/server/actions/projects";
 
 /**
  * Admin Projects Management Page
- * 
+ *
  * Full project management with all permissions:
- * - Create new projects
+ * - Create new projects (fetches from MongoDB)
  * - Edit any project
  * - Delete any project
- * - View all projects
+ * - View all projects from database
  */
 
 interface Project {
   id: string;
   name: string;
   description: string;
-  status: 'active' | 'on-hold' | 'completed';
-  owner: string;
-  ownerEmail: string;
-  members: number;
-  progress: number;
-  dueDate: string;
+  status: string;
+  priority: string;
+  owner: {
+    name: string;
+    email: string;
+  };
+  team: Array<{ name: string; email: string }>;
+  startDate: string;
+  endDate: string;
+  budget?: number;
 }
 
-const initialProjects: Project[] = [
-  {
-    id: '1',
-    name: 'Website Redesign',
-    description: 'Complete redesign of the company website',
-    status: 'active',
-    owner: 'Sarah Chen',
-    ownerEmail: 'sarah@company.com',
-    members: 4,
-    progress: 65,
-    dueDate: '2024-12-31',
-  },
-  {
-    id: '2',
-    name: 'Mobile App Development',
-    description: 'Native iOS and Android app',
-    status: 'active',
-    owner: 'John Smith',
-    ownerEmail: 'john@company.com',
-    members: 6,
-    progress: 45,
-    dueDate: '2025-03-15',
-  },
-  {
-    id: '3',
-    name: 'API Integration',
-    description: 'Backend API for third-party services',
-    status: 'on-hold',
-    owner: 'Emily Davis',
-    ownerEmail: 'emily@company.com',
-    members: 3,
-    progress: 25,
-    dueDate: '2025-02-28',
-  },
-];
-
 export default function AdminProjectsPage() {
-  const [projects, setProjects] = useState(initialProjects);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    status: 'active' as const,
+    name: "",
+    description: "",
+    status: "planning",
+    priority: "medium",
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      .toISOString()
+      .split("T")[0],
+    budget: "",
   });
 
-  const handleAddProject = () => {
-    if (formData.name.trim()) {
+  // Fetch projects on mount
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    setIsLoading(true);
+    try {
+      const result = await getAllProjects();
+      if (result.success) {
+        setProjects(result.projects as any);
+      }
+    } catch (error) {
+      console.error("[v0] Error fetching projects:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAddProject = async () => {
+    if (!formData.name.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const userEmail =
+        sessionStorage.getItem("userEmail") || "admin@company.com";
+
       if (editingId) {
-        setProjects(projects.map(p => 
-          p.id === editingId ? { ...p, ...formData } : p
-        ));
-        setEditingId(null);
-      } else {
-        const newProject: Project = {
-          id: Date.now().toString(),
+        // Update existing project
+        const result = await updateProject(editingId, {
           name: formData.name,
           description: formData.description,
           status: formData.status,
-          owner: 'You',
-          ownerEmail: sessionStorage.getItem('userEmail') || 'admin@company.com',
-          members: 1,
-          progress: 0,
-          dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        };
-        setProjects([newProject, ...projects]);
+          priority: formData.priority,
+          endDate: formData.endDate,
+          budget: formData.budget ? parseInt(formData.budget) : undefined,
+        });
+
+        if (result.success) {
+          await fetchProjects();
+          setEditingId(null);
+        }
+      } else {
+        // Create new project
+        const result = await createProject({
+          name: formData.name,
+          description: formData.description,
+          ownerEmail: userEmail,
+          status: formData.status,
+          priority: formData.priority,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          budget: formData.budget ? parseInt(formData.budget) : undefined,
+        });
+
+        if (result.success) {
+          await fetchProjects();
+        }
       }
-      setFormData({ name: '', description: '', status: 'active' });
+
+      setFormData({
+        name: "",
+        description: "",
+        status: "planning",
+        priority: "medium",
+        startDate: new Date().toISOString().split("T")[0],
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split("T")[0],
+        budget: "",
+      });
       setIsModalOpen(false);
+    } catch (error) {
+      console.error("[v0] Error saving project:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,31 +153,49 @@ export default function AdminProjectsPage() {
       name: project.name,
       description: project.description,
       status: project.status,
+      priority: project.priority,
+      startDate: project.startDate?.split("T")[0] || "",
+      endDate: project.endDate?.split("T")[0] || "",
+      budget: project.budget?.toString() || "",
     });
     setIsModalOpen(true);
   };
 
-  const handleDeleteProject = (id: string) => {
-    setProjects(projects.filter(p => p.id !== id));
-    setDeleteConfirm(null);
+  const handleDeleteProject = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const result = await deleteProject(id);
+      if (result.success) {
+        await fetchProjects();
+      }
+    } catch (error) {
+      console.error("[v0] Error deleting project:", error);
+    } finally {
+      setIsLoading(false);
+      setDeleteConfirm(null);
+    }
   };
 
-  const filteredProjects = projects.filter(p =>
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    p.owner.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredProjects = projects.filter(
+    (p) =>
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.owner.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.owner.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active':
-        return 'success';
-      case 'on-hold':
-        return 'warning';
-      case 'completed':
-        return 'default';
+      case "in-progress":
+        return "success";
+      case "on-hold":
+        return "warning";
+      case "completed":
+        return "default";
+      case "planning":
+        return "secondary";
       default:
-        return 'default';
+        return "default";
     }
   };
 
@@ -147,12 +205,24 @@ export default function AdminProjectsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-foreground">All Projects</h1>
-          <p className="text-muted-foreground mt-1">Manage all projects in the system</p>
+          <p className="text-muted-foreground mt-1">
+            Manage all projects in the system
+          </p>
         </div>
         <Button
           onClick={() => {
             setEditingId(null);
-            setFormData({ name: '', description: '', status: 'active' });
+            setFormData({
+              name: "",
+              description: "",
+              status: "planning",
+              priority: "medium",
+              startDate: new Date().toISOString().split("T")[0],
+              endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                .toISOString()
+                .split("T")[0],
+              budget: "",
+            });
             setIsModalOpen(true);
           }}
           className="flex items-center gap-2"
@@ -165,7 +235,10 @@ export default function AdminProjectsPage() {
       {/* Search Bar */}
       <div className="flex gap-2">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+            size={20}
+          />
           <Input
             placeholder="Search projects..."
             value={searchQuery}
@@ -183,7 +256,9 @@ export default function AdminProjectsPage() {
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle>{project.name}</CardTitle>
-                  <CardDescription className="mt-1">{project.owner}</CardDescription>
+                  <CardDescription className="mt-1">
+                    {project.owner.name}
+                  </CardDescription>
                 </div>
                 <Badge variant={getStatusColor(project.status) as any}>
                   {project.status}
@@ -192,30 +267,32 @@ export default function AdminProjectsPage() {
             </CardHeader>
             <CardContent className="flex-1 space-y-4">
               <p className="text-sm text-foreground">{project.description}</p>
-              
-              {/* Progress */}
-              <div>
-                <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-muted-foreground">Progress</span>
-                  <span className="font-medium">{project.progress}%</span>
-                </div>
-                <div className="w-full bg-muted rounded-full h-2">
-                  <div
-                    className="bg-primary h-2 rounded-full"
-                    style={{ width: `${project.progress}%` }}
-                  />
-                </div>
-              </div>
 
               {/* Info */}
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <p className="text-muted-foreground">Members</p>
-                  <p className="font-medium">{project.members}</p>
+                  <p className="text-muted-foreground">Priority</p>
+                  <p className="font-medium capitalize">{project.priority}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">Due</p>
-                  <p className="font-medium">{new Date(project.dueDate).toLocaleDateString()}</p>
+                  <p className="text-muted-foreground">Team</p>
+                  <p className="font-medium">{project.team.length} members</p>
+                </div>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-muted-foreground">Start</p>
+                  <p className="font-medium">
+                    {new Date(project.startDate).toLocaleDateString()}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-muted-foreground">End</p>
+                  <p className="font-medium">
+                    {new Date(project.endDate).toLocaleDateString()}
+                  </p>
                 </div>
               </div>
 
@@ -226,6 +303,7 @@ export default function AdminProjectsPage() {
                   size="sm"
                   onClick={() => handleOpenEdit(project)}
                   className="flex-1 flex items-center gap-2"
+                  disabled={isLoading}
                 >
                   <Edit size={16} />
                   Edit
@@ -235,6 +313,7 @@ export default function AdminProjectsPage() {
                   size="sm"
                   onClick={() => setDeleteConfirm(project.id)}
                   className="flex-1 flex items-center gap-2"
+                  disabled={isLoading}
                 >
                   <Trash2 size={16} />
                   Delete
@@ -260,9 +339,19 @@ export default function AdminProjectsPage() {
         onClose={() => {
           setIsModalOpen(false);
           setEditingId(null);
-          setFormData({ name: '', description: '', status: 'active' });
+          setFormData({
+            name: "",
+            description: "",
+            status: "planning",
+            priority: "medium",
+            startDate: new Date().toISOString().split("T")[0],
+            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0],
+            budget: "",
+          });
         }}
-        title={editingId ? 'Edit Project' : 'Create New Project'}
+        title={editingId ? "Edit Project" : "Create New Project"}
         actions={
           <>
             <Button
@@ -270,13 +359,24 @@ export default function AdminProjectsPage() {
               onClick={() => {
                 setIsModalOpen(false);
                 setEditingId(null);
-                setFormData({ name: '', description: '', status: 'active' });
+                setFormData({
+                  name: "",
+                  description: "",
+                  status: "planning",
+                  priority: "medium",
+                  startDate: new Date().toISOString().split("T")[0],
+                  endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                    .toISOString()
+                    .split("T")[0],
+                  budget: "",
+                });
               }}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button onClick={handleAddProject}>
-              {editingId ? 'Update' : 'Create'}
+            <Button onClick={handleAddProject} disabled={isLoading}>
+              {editingId ? "Update" : "Create"}
             </Button>
           </>
         }
@@ -287,23 +387,73 @@ export default function AdminProjectsPage() {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Enter project name"
+            disabled={isLoading}
           />
           <Textarea
             label="Description"
             value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
             placeholder="Enter project description"
             rows={4}
+            disabled={isLoading}
           />
           <Select
             label="Status"
             value={formData.status}
-            onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
+            onChange={(e) =>
+              setFormData({ ...formData, status: e.target.value })
+            }
             options={[
-              { value: 'active', label: 'Active' },
-              { value: 'on-hold', label: 'On Hold' },
-              { value: 'completed', label: 'Completed' },
+              { value: "planning", label: "Planning" },
+              { value: "in-progress", label: "In Progress" },
+              { value: "on-hold", label: "On Hold" },
+              { value: "completed", label: "Completed" },
             ]}
+            disabled={isLoading}
+          />
+          <Select
+            label="Priority"
+            value={formData.priority}
+            onChange={(e) =>
+              setFormData({ ...formData, priority: e.target.value })
+            }
+            options={[
+              { value: "low", label: "Low" },
+              { value: "medium", label: "Medium" },
+              { value: "high", label: "High" },
+              { value: "critical", label: "Critical" },
+            ]}
+            disabled={isLoading}
+          />
+          <Input
+            label="Start Date"
+            type="date"
+            value={formData.startDate}
+            onChange={(e) =>
+              setFormData({ ...formData, startDate: e.target.value })
+            }
+            disabled={isLoading}
+          />
+          <Input
+            label="End Date"
+            type="date"
+            value={formData.endDate}
+            onChange={(e) =>
+              setFormData({ ...formData, endDate: e.target.value })
+            }
+            disabled={isLoading}
+          />
+          <Input
+            label="Budget"
+            type="number"
+            value={formData.budget}
+            onChange={(e) =>
+              setFormData({ ...formData, budget: e.target.value })
+            }
+            placeholder="Enter budget amount"
+            disabled={isLoading}
           />
         </div>
       </Modal>

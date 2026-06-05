@@ -1,14 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import { X } from 'lucide-react';
+import React, { useEffect } from "react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
   children: React.ReactNode;
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   actions?: React.ReactNode;
 }
 
@@ -17,26 +17,26 @@ export function Modal({
   onClose,
   title,
   children,
-  size = 'md',
+  size = "md",
   actions,
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
   const sizeClasses = {
-    sm: 'max-w-sm',
-    md: 'max-w-md',
-    lg: 'max-w-lg',
+    sm: "max-w-md",
+    md: "max-w-xl",
+    lg: "max-w-2xl",
   };
 
   return (
@@ -48,7 +48,9 @@ export function Modal({
       />
 
       {/* Modal */}
-      <div className={`relative bg-card text-card-foreground rounded-lg shadow-xl w-full mx-4 ${sizeClasses[size]}`}>
+      <div
+        className={`relative bg-card text-card-foreground rounded-lg shadow-xl w-full mx-4 ${sizeClasses[size]}`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold">{title}</h2>
@@ -61,9 +63,7 @@ export function Modal({
         </div>
 
         {/* Content */}
-        <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">
-          {children}
-        </div>
+        <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">{children}</div>
 
         {/* Footer */}
         {actions && (

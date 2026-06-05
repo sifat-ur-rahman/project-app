@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITask extends Document {
   _id: mongoose.Types.ObjectId;
@@ -8,8 +8,8 @@ export interface ITask extends Document {
   projectName: string;
   assignee: mongoose.Types.ObjectId;
   assigneeEmail: string;
-  status: 'todo' | 'in-progress' | 'review' | 'completed';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: "todo" | "in-progress" | "review" | "completed";
+  priority: "low" | "medium" | "high" | "critical";
   dueDate: Date;
   createdBy: mongoose.Types.ObjectId;
   createdByEmail: string;
@@ -28,7 +28,7 @@ const taskSchema = new Schema<ITask>(
   {
     title: {
       type: String,
-      required: [true, 'Please provide a task title'],
+      required: [true, "Please provide a task title"],
       trim: true,
     },
     description: {
@@ -37,7 +37,7 @@ const taskSchema = new Schema<ITask>(
     },
     project: {
       type: Schema.Types.ObjectId,
-      ref: 'Project',
+      ref: "Project",
       required: true,
     },
     projectName: {
@@ -46,7 +46,7 @@ const taskSchema = new Schema<ITask>(
     },
     assignee: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     assigneeEmail: {
@@ -55,20 +55,27 @@ const taskSchema = new Schema<ITask>(
     },
     status: {
       type: String,
-      enum: ['todo', 'in-progress', 'review', 'completed'],
-      default: 'todo',
+      enum: [
+        "todo",
+        "in-progress",
+        "review",
+        "completed",
+        "on-hold",
+        "pending",
+      ],
+      default: "todo",
     },
     priority: {
       type: String,
-      enum: ['low', 'medium', 'high', 'critical'],
-      default: 'medium',
+      enum: ["low", "medium", "high", "critical"],
+      default: "medium",
     },
     dueDate: {
       type: Date,
     },
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     createdByEmail: {
@@ -85,7 +92,8 @@ const taskSchema = new Schema<ITask>(
     comments: [String],
     attachments: [String],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.models.Task || mongoose.model<ITask>('Task', taskSchema);
+export default mongoose.models.Task ||
+  mongoose.model<ITask>("Task", taskSchema);
