@@ -88,10 +88,14 @@ export default function Page() {
       </nav>
 
       {/* Hero Section */}
-      <section className="mesh-bg relative py-24 sm:py-36 overflow-hidden">
+      <section className="mesh-bg relative border-b border-border/50 py-14 sm:py-20 overflow-hidden">
         {/* Decorative orbs */}
+
         <div className="absolute top-1/4 left-10 w-64 h-64 rounded-full bg-primary/5 blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-primary/4 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 h-[1.5px] w-full overflow-hidden">
+          <div className="animate-border-slide  h-full w-1/3 bg-linear-to-r from-transparent via-blue-500 to-transparent"></div>
+        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           <h1 className="animate-fade-up-1 font-display text-5xl sm:text-7xl font-extrabold tracking-tight mb-6 leading-[1.05]">
@@ -124,24 +128,6 @@ export default function Page() {
             >
               Explore Features
             </Button>
-          </div>
-
-          {/* Hero Stats */}
-          <div className="animate-fade-up-4 grid grid-cols-3 gap-4 max-w-lg mx-auto">
-            {[
-              { value: "12+", label: "Sample Projects" },
-              { value: "8", label: "Team Members" },
-              { value: "100%", label: "Real-time Data" },
-            ].map((stat) => (
-              <div key={stat.label} className="stat-card rounded-2xl py-5 px-4">
-                <div className="font-display text-3xl font-bold text-primary mb-1">
-                  {stat.value}
-                </div>
-                <p className="text-xs text-muted-foreground font-medium tracking-wide uppercase">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -243,13 +229,13 @@ export default function Page() {
               <div className="flex items-start gap-5">
                 <div className="avatar-ring flex-shrink-0">
                   <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-primary/40 flex items-center justify-center">
-                    <span className="font-display text-base font-bold text-primary-foreground">
+                    <span className="font-display text-base font-bold text-white">
                       SR
                     </span>
                   </div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-display text-lg font-bold mb-2 tracking-tight">
+                  <h4 className="font-display text-lg  font-bold mb-2 tracking-tight">
                     Sifat Ur Rahman
                   </h4>
                   <p className="text-sm text-muted-foreground mb-4 leading-relaxed max-w-2xl">
@@ -263,7 +249,7 @@ export default function Page() {
                     href="http://sifat-ur-rahman.vercel.app/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-xl hover:bg-primary/90 transition-all duration-200 font-medium text-sm btn-primary-glow"
+                    className="inline-flex items-center text-white gap-2 px-4 py-2 bg-primary  rounded-xl hover:bg-primary/90 transition-all duration-200 font-medium text-sm btn-primary-glow"
                   >
                     View Portfolio
                     <ArrowRight className="w-3.5 h-3.5" />
