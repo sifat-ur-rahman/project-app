@@ -38,7 +38,7 @@ export default function MemberTasksPage() {
         setTasks(result.tasks || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching tasks:", err);
+      console.error(" Error fetching tasks:", err);
       setError("Failed to load tasks");
     } finally {
       setIsLoading(false);
@@ -54,7 +54,7 @@ export default function MemberTasksPage() {
         setSelectedTask(null);
       }
     } catch (err) {
-      console.error("[v0] Error updating status:", err);
+      console.error(" Error updating status:", err);
       setError("Failed to update task");
     }
   };

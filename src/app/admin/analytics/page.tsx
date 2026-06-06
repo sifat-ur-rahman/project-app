@@ -68,7 +68,7 @@ export default function AdminAnalyticsPage() {
         setTeamMembers(teamResult.members || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching analytics data:", err);
+      console.error(" Error fetching analytics data:", err);
       setError("Failed to load analytics");
     } finally {
       setIsLoading(false);

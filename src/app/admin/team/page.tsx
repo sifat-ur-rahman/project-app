@@ -72,7 +72,7 @@ export default function AdminTeamPage() {
         setTasks(tasksResult.tasks || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching team data:", err);
+      console.error(" Error fetching team data:", err);
       setError("Failed to load team members");
     } finally {
       setIsLoading(false);
@@ -120,7 +120,7 @@ export default function AdminTeamPage() {
       });
       setIsModalOpen(false);
     } catch (err) {
-      console.error("[v0] Error saving member:", err);
+      console.error(" Error saving member:", err);
       setError("Failed to save team member");
     } finally {
       setIsLoading(false);
@@ -148,7 +148,7 @@ export default function AdminTeamPage() {
         await fetchData();
       }
     } catch (err) {
-      console.error("[v0] Error deleting member:", err);
+      console.error(" Error deleting member:", err);
       setError("Failed to delete team member");
     } finally {
       setIsLoading(false);

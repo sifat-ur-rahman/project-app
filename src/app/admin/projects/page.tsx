@@ -81,7 +81,7 @@ export default function AdminProjectsPage() {
         setProjects(result.projects as any);
       }
     } catch (error) {
-      console.error("[v0] Error fetching projects:", error);
+      console.error(" Error fetching projects:", error);
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +141,7 @@ export default function AdminProjectsPage() {
       });
       setIsModalOpen(false);
     } catch (error) {
-      console.error("[v0] Error saving project:", error);
+      console.error(" Error saving project:", error);
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +169,7 @@ export default function AdminProjectsPage() {
         await fetchProjects();
       }
     } catch (error) {
-      console.error("[v0] Error deleting project:", error);
+      console.error(" Error deleting project:", error);
     } finally {
       setIsLoading(false);
       setDeleteConfirm(null);

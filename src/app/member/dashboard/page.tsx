@@ -39,7 +39,7 @@ export default function MemberDashboardPage() {
         setTasks(result.tasks || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching tasks:", err);
+      console.error(" Error fetching tasks:", err);
     } finally {
       setIsLoading(false);
     }

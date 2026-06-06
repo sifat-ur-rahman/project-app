@@ -70,7 +70,7 @@ export default function ManagerDashboardPage() {
         setTasks(tasksResult.tasks || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching manager data:", err);
+      console.error(" Error fetching manager data:", err);
       setError("Failed to load dashboard");
     } finally {
       setIsLoading(false);
