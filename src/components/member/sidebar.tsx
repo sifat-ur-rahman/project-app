@@ -6,14 +6,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, CheckSquare, LogOut, Menu, X } from "lucide-react";
 
-/**
- * Member Sidebar Navigation Component
- *
- * Team member users have minimal access:
- * - Dashboard (personal overview)
- * - My Tasks (can view and edit only assigned tasks)
- * - NO project management, team management, or settings
- */
 export default function MemberSidebar() {
   const router = useRouter();
   const pathname = usePathname();

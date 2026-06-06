@@ -22,16 +22,6 @@ import {
   getProjectsByOwner,
 } from "@/server/actions/projects";
 
-/**
- * Manager (PM) Projects Management Page
- *
- * PM-specific project management with database integration:
- * - Create new projects
- * - Edit own projects (filtered by ownerEmail)
- * - No delete permission (Admin only)
- * - Real data from MongoDB
- */
-
 export default function ManagerProjectsPage() {
   const [userEmail, setUserEmail] = useState("");
   const [projects, setProjects] = useState<any[]>([]);

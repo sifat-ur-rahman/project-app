@@ -25,16 +25,6 @@ import {
 import { getAllTeamMembers } from "@/server/actions/team";
 import { getAllProjects, getProjectsByOwner } from "@/server/actions/projects";
 
-/**
- * Manager (PM) Tasks Management Page
- *
- * PM task management with database integration:
- * - Create/edit tasks in own projects
- * - Assign to team members
- * - No delete (admin only)
- * - Real data from MongoDB
- */
-
 export default function ManagerTasksPage() {
   const [userEmail, setUserEmail] = useState("");
   const [tasks, setTasks] = useState<any[]>([]);

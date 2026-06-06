@@ -1,17 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUserRole } from '@/lib/auth';
-import ManagerSidebar from '@/components/manager/sidebar';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getUserRole } from "@/lib/auth";
+import ManagerSidebar from "@/components/manager/sidebar";
 
-/**
- * Manager (PM) Dashboard Layout
- * 
- * Protected layout for Project Manager users only
- * Shows PM-specific sidebar navigation
- * Project and task management capabilities
- */
 export default function ManagerLayout({
   children,
 }: {
@@ -22,9 +15,9 @@ export default function ManagerLayout({
   // Verify user is PM on mount
   useEffect(() => {
     const userRole = getUserRole();
-    if (userRole !== 'pm') {
+    if (userRole !== "pm") {
       // Redirect non-PM users
-      router.push('/auth/login');
+      router.push("/auth/login");
     }
   }, [router]);
 
@@ -35,9 +28,7 @@ export default function ManagerLayout({
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto">
-          {children}
-        </div>
+        <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
   );

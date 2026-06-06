@@ -6,13 +6,6 @@ import { getUserRole } from "@/lib/auth";
 import AdminSidebar from "@/components/admin/sidebar";
 import AdminTopbar from "@/components/admin/topbar";
 
-/**
- * Admin Dashboard Layout
- *
- * Protected layout for admin users only
- * Shows admin-specific sidebar navigation
- * Full system access and management capabilities
- */
 export default function AdminLayout({
   children,
 }: {

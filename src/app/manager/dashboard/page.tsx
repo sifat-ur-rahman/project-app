@@ -25,16 +25,6 @@ import { FolderOpen, CheckSquare, TrendingUp, AlertCircle } from "lucide-react";
 import { getAllProjects } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
 
-/**
- * Manager (PM) Dashboard Page
- *
- * Project-focused overview with real database:
- * - My projects count (filtered by ownerEmail)
- * - My team's tasks overview
- * - Completion rate for my projects
- * - Charts based on real data
- */
-
 export default function ManagerDashboardPage() {
   const [userEmail, setUserEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);

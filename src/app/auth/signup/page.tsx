@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { createTeamMember } from "@/server/actions/team";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -37,14 +38,28 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      // Placeholder for actual auth logic
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      // Create new user in database
+      const result = await createTeamMember({
+        name: fullName,
+        email: email,
+        role: "member",
+        department: "",
+        password: password,
+      });
 
-      // Simulate successful signup
-      sessionStorage.setItem("userEmail", email);
-      sessionStorage.setItem("userRole", "member");
-      router.push("/dashboard");
+      if (result.success) {
+        // Store user session
+        sessionStorage.setItem("userEmail", email);
+        sessionStorage.setItem("userRole", "member");
+        sessionStorage.setItem("userName", fullName);
+
+        // Redirect to member dashboard
+        router.push("/member/dashboard");
+      } else {
+        setError(result.error || "Signup failed. Please try again.");
+      }
     } catch (err) {
+      console.error("[v0] Signup error:", err);
       setError("Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -56,7 +71,9 @@ export default function SignupPage() {
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-foreground mb-2">TaskForge</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            Project Manager
+          </h1>
           <p className="text-muted-foreground">Create your account</p>
         </div>
 

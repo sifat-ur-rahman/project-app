@@ -160,9 +160,9 @@ export default function ManagerReportsPage() {
                 <p className="text-muted-foreground">No projects created</p>
               ) : (
                 <div className="space-y-3">
-                  {projects.map((p) => (
+                  {projects.map((p, index) => (
                     <div
-                      key={p._id}
+                      key={index}
                       className="flex items-center justify-between pb-2 border-b border-border last:border-0"
                     >
                       <div>
