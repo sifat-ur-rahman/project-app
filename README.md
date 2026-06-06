@@ -1,4 +1,6 @@
-# Project Management Application TaskForge
+# Project Management Application
+
+## [TaskForge](https://task-forge-pink.vercel.app)
 
 A modern, full-featured project management system built with **Next.js 16**, **React 19**, **MongoDB**, and **Tailwind CSS**. Features role-based access control, real-time task management, team collaboration, and comprehensive analytics with a production-ready backend.
 
@@ -62,8 +64,7 @@ A modern, full-featured project management system built with **Next.js 16**, **R
 
 ### Prerequisites
 
-- **Node.js** 18+ (LTS recommended)
-- **npm**, **pnpm**, **yarn**, or **bun** package manager
+- **Node.js** 18+
 - **MongoDB** instance (local or MongoDB Atlas cloud)
 - **Git** for version control
 
@@ -90,6 +91,12 @@ npm install
 MONGODB_URI=mongodb://localhost:27017/task-forge-db
 TOKEN_SECRET=your_secret_key_here
 
+```
+
+## Run Development Server
+
+```bash
+npm run dev
 ```
 
 ## Demo Credentials
