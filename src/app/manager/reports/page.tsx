@@ -8,31 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle } from "lucide-react";
 import { getAllProjects, getProjectsByOwner } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
-
-/**
- * Manager (PM) Reports Page
- *
- * Project-specific analytics with database:
- * - PM's project progress
- * - Team task distribution
- * - Real metrics from MongoDB
- */
 
 export default function ManagerReportsPage() {
   const [userEmail, setUserEmail] = useState("");
@@ -188,7 +168,7 @@ export default function ManagerReportsPage() {
                       <div>
                         <p className="font-medium">{p.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {myTasks.filter((t) => t.projectId === p._id).length}{" "}
+                          {myTasks.filter((t) => t.projectId === p.id).length}{" "}
                           tasks
                         </p>
                       </div>

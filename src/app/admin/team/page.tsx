@@ -23,17 +23,6 @@ import {
 } from "@/server/actions/team";
 import { getAllTasks } from "@/server/actions/tasks";
 
-/**
- * Admin Team Management Page
- *
- * Full team management with real database integration:
- * - Add new team members to MongoDB
- * - Edit member details
- * - Delete members
- * - Assign roles
- * - View all members from database
- */
-
 export default function AdminTeamPage() {
   const [members, setMembers] = useState<any[]>([]);
   const [tasks, setTasks] = useState<any[]>([]);

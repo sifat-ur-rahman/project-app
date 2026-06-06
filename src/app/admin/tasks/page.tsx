@@ -34,18 +34,6 @@ import {
 import { getAllTeamMembers } from "@/server/actions/team";
 import { getAllProjects } from "@/server/actions/projects";
 
-/**
- * Admin Tasks Management Page
- *
- * Full task management with real database integration:
- * - Create tasks in MongoDB
- * - Edit any task
- * - Delete any task
- * - View all tasks from database
- * - Assign tasks to team members
- * - Real-time status updates
- */
-
 export default function AdminTasksPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);

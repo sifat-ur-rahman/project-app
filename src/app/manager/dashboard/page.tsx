@@ -80,12 +80,12 @@ export default function ManagerDashboardPage() {
   // Calculate metrics from real data
   const myProjectsCount = projects.length;
   const myTasksCount = tasks.filter((t) =>
-    projects.map((p) => p._id).includes(t.projectId),
+    projects.map((p) => p.id).includes(t.projectId),
   ).length;
   const completedTasks = tasks.filter(
     (t) =>
       t.status === "completed" &&
-      projects.map((p) => p._id).includes(t.projectId),
+      projects.map((p) => p.id).includes(t.projectId),
   ).length;
   const completionRate =
     myTasksCount > 0 ? Math.round((completedTasks / myTasksCount) * 100) : 0;
@@ -94,12 +94,11 @@ export default function ManagerDashboardPage() {
   const inProgressTasks = tasks.filter(
     (t) =>
       t.status === "in-progress" &&
-      projects.map((p) => p._id).includes(t.projectId),
+      projects.map((p) => p.id).includes(t.projectId),
   ).length;
   const pendingTasks = tasks.filter(
     (t) =>
-      t.status === "pending" &&
-      projects.map((p) => p._id).includes(t.projectId),
+      t.status === "pending" && projects.map((p) => p.id).includes(t.projectId),
   ).length;
 
   const taskStatusData = [
@@ -314,8 +313,9 @@ export default function ManagerDashboardPage() {
                     variant={
                       project.status === "completed" ? "success" : "default"
                     }
+                    className="text-white"
                   >
-                    {tasks.filter((t) => t.projectId === project._id).length}{" "}
+                    {tasks.filter((t) => t.projectId === project.id).length}{" "}
                     tasks
                   </Badge>
                 </div>

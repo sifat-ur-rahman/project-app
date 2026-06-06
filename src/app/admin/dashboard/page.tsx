@@ -32,17 +32,6 @@ import { getAllProjects } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
 import { getAllTeamMembers } from "@/server/actions/team";
 
-/**
- * Admin Dashboard Page
- *
- * Full system overview with real data from database:
- * - Total projects count from MongoDB
- * - All tasks overview with status breakdown
- * - Team members count
- * - Overall completion rate calculated from real data
- * - Charts based on actual project/task data
- */
-
 export default function AdminDashboardPage() {
   const [userEmail, setUserEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);

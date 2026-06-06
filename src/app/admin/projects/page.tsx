@@ -23,16 +23,6 @@ import {
   deleteProject,
 } from "@/server/actions/projects";
 
-/**
- * Admin Projects Management Page
- *
- * Full project management with all permissions:
- * - Create new projects (fetches from MongoDB)
- * - Edit any project
- * - Delete any project
- * - View all projects from database
- */
-
 interface Project {
   id: string;
   name: string;

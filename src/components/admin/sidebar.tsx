@@ -16,17 +16,6 @@ import {
   X,
 } from "lucide-react";
 
-/**
- * Admin Sidebar Navigation Component
- *
- * Admin users have full access to all features:
- * - Dashboard overview
- * - Projects management (create, edit, delete)
- * - Tasks management (create, edit, delete)
- * - Team member management
- * - Analytics and reports
- * - System settings
- */
 export default function AdminSidebar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -73,7 +62,7 @@ export default function AdminSidebar() {
       {/* Mobile toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 hover:bg-muted rounded"
+        className="lg:hidden fixed top-4 right-4 z-50 p-2 hover:bg-muted rounded"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
