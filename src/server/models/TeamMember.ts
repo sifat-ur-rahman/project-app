@@ -1,17 +1,17 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface ITeamMember extends Document {
   _id: mongoose.Types.ObjectId;
   user: mongoose.Types.ObjectId;
   email: string;
   name: string;
-  role: 'admin' | 'pm' | 'member';
+  role: "admin" | "pm" | "member";
   department: string;
   assignedProjects: mongoose.Types.ObjectId[];
   tasksAssigned: number;
   tasksCompleted: number;
   joiningDate: Date;
-  status: 'active' | 'inactive';
+  status: "active" | "inactive";
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +20,7 @@ const teamMemberSchema = new Schema<ITeamMember>(
   {
     user: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
       unique: true,
     },
@@ -37,8 +37,8 @@ const teamMemberSchema = new Schema<ITeamMember>(
     },
     role: {
       type: String,
-      enum: ['admin', 'pm', 'member'],
-      default: 'member',
+      enum: ["admin", "pm", "member"],
+      default: "member",
     },
     department: {
       type: String,
@@ -47,7 +47,7 @@ const teamMemberSchema = new Schema<ITeamMember>(
     assignedProjects: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'Project',
+        ref: "Project",
       },
     ],
     tasksAssigned: {
@@ -64,11 +64,12 @@ const teamMemberSchema = new Schema<ITeamMember>(
     },
     status: {
       type: String,
-      enum: ['active', 'inactive'],
-      default: 'active',
+      enum: ["active", "inactive"],
+      default: "active",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.models.TeamMember || mongoose.model<ITeamMember>('TeamMember', teamMemberSchema);
+export default mongoose.models.TeamMember ||
+  mongoose.model<ITeamMember>("TeamMember", teamMemberSchema);

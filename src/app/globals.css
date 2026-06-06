@@ -249,3 +249,24 @@
   margin-right: 8px;
   vertical-align: middle;
 }
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  overflow: auto;
+}
+
+@keyframes border-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+.animate-border-slide {
+  animation: border-slide 5s linear infinite;
+}

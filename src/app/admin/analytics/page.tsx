@@ -27,16 +27,6 @@ import { getAllProjects } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
 import { getAllTeamMembers } from "@/server/actions/team";
 
-/**
- * Admin Analytics Page
- *
- * Full system analytics with real data from database:
- * - Project completion trends calculated from real data
- * - Team productivity metrics
- * - Task distribution from database
- * - System-wide KPIs
- */
-
 export default function AdminAnalyticsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState<any[]>([]);
@@ -68,7 +58,7 @@ export default function AdminAnalyticsPage() {
         setTeamMembers(teamResult.members || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching analytics data:", err);
+      console.error(" Error fetching analytics data:", err);
       setError("Failed to load analytics");
     } finally {
       setIsLoading(false);

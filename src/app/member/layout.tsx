@@ -1,17 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { getUserRole } from '@/lib/auth';
-import MemberSidebar from '@/components/member/sidebar';
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getUserRole } from "@/lib/auth";
+import MemberSidebar from "@/components/member/sidebar";
 
-/**
- * Member Dashboard Layout
- * 
- * Protected layout for team member users only
- * Shows member-specific sidebar navigation
- * Limited access - can view and edit assigned tasks only
- */
 export default function MemberLayout({
   children,
 }: {
@@ -22,9 +15,9 @@ export default function MemberLayout({
   // Verify user is member on mount
   useEffect(() => {
     const userRole = getUserRole();
-    if (userRole !== 'member') {
+    if (userRole !== "member") {
       // Redirect non-member users
-      router.push('/auth/login');
+      router.push("/auth/login");
     }
   }, [router]);
 
@@ -35,9 +28,7 @@ export default function MemberLayout({
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 overflow-auto">
-          {children}
-        </div>
+        <div className="flex-1 overflow-auto">{children}</div>
       </main>
     </div>
   );

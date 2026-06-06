@@ -46,7 +46,7 @@ export default function LoginPage() {
   const handleDemoLogin = async (role: "admin" | "pm" | "member") => {
     setIsLoading(true);
     await new Promise((resolve) => setTimeout(resolve, 500));
-    sessionStorage.setItem("userEmail", `${role}@example.com`);
+    sessionStorage.setItem("userEmail", `${role}@company.com`);
     sessionStorage.setItem("userRole", role);
 
     // Redirect to role-specific dashboard

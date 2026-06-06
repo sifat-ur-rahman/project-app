@@ -34,18 +34,6 @@ import {
 import { getAllTeamMembers } from "@/server/actions/team";
 import { getAllProjects } from "@/server/actions/projects";
 
-/**
- * Admin Tasks Management Page
- *
- * Full task management with real database integration:
- * - Create tasks in MongoDB
- * - Edit any task
- * - Delete any task
- * - View all tasks from database
- * - Assign tasks to team members
- * - Real-time status updates
- */
-
 export default function AdminTasksPage() {
   const [tasks, setTasks] = useState<any[]>([]);
   const [teamMembers, setTeamMembers] = useState<any[]>([]);
@@ -92,7 +80,7 @@ export default function AdminTasksPage() {
         setProjects(projectsResult.projects || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching data:", err);
+      console.error(" Error fetching data:", err);
       setError("Failed to load tasks");
     } finally {
       setIsLoading(false);
@@ -103,7 +91,7 @@ export default function AdminTasksPage() {
     if (!formData.title.trim()) return;
     const userEmail =
       sessionStorage.getItem("userEmail") || "admin@company.com";
-    console.log("form Data", formData);
+
     setIsLoading(true);
     try {
       if (editingId) {
@@ -115,7 +103,7 @@ export default function AdminTasksPage() {
           priority: formData.priority,
           dueDate: formData.dueDate,
         });
-        console.log("updateTask result:", result);
+
         if (result.success) {
           await fetchData();
           setEditingId(null);
@@ -132,7 +120,7 @@ export default function AdminTasksPage() {
           projectName: "",
           createdByEmail: userEmail,
         });
-        console.log("createTask result:", result);
+
         if (result.success) {
           await fetchData();
         }
@@ -149,7 +137,7 @@ export default function AdminTasksPage() {
       });
       setIsModalOpen(false);
     } catch (err) {
-      console.error("[v0] Error saving task:", err);
+      console.error(" Error saving task:", err);
       setError("Failed to save task");
     } finally {
       setIsLoading(false);
@@ -178,7 +166,7 @@ export default function AdminTasksPage() {
         await fetchData();
       }
     } catch (err) {
-      console.error("[v0] Error deleting task:", err);
+      console.error(" Error deleting task:", err);
       setError("Failed to delete task");
     } finally {
       setIsLoading(false);
@@ -194,7 +182,7 @@ export default function AdminTasksPage() {
         await fetchData();
       }
     } catch (err) {
-      console.error("[v0] Error updating task status:", err);
+      console.error(" Error updating task status:", err);
     }
   };
 
@@ -388,7 +376,7 @@ export default function AdminTasksPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <span>{task.projectId || "No project"}</span>
                       <span>•</span>
-                      <span>{task.assignee?.name || "Unassigned"}</span>
+                      <span>{task.assigneeName || "Unassigned"}</span>
                     </div>
                     {task.description && (
                       <p className="text-sm text-muted-foreground mt-1 truncate">

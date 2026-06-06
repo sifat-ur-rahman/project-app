@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal } from './modal';
-import { Button } from './button';
-import { AlertCircle } from 'lucide-react';
+import React from "react";
+import { Modal } from "./modal";
+import { Button } from "./button";
+import { AlertCircle } from "lucide-react";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -19,8 +19,8 @@ export function ConfirmDialog({
   isOpen,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   isDangerous = false,
   isLoading = false,
   onConfirm,
@@ -38,7 +38,7 @@ export function ConfirmDialog({
             {cancelText}
           </Button>
           <Button
-            variant={isDangerous ? 'destructive' : 'primary'}
+            variant={isDangerous ? "destructive" : "primary"}
             onClick={onConfirm}
             isLoading={isLoading}
           >

@@ -14,16 +14,6 @@ import {
   X,
 } from "lucide-react";
 
-/**
- * Manager (PM) Sidebar Navigation Component
- *
- * PM users have limited management access:
- * - Dashboard overview
- * - Projects management (create, edit only - no delete)
- * - Tasks management (create, edit only - no delete)
- * - Analytics and reports
- * - NO team management or system settings
- */
 export default function ManagerSidebar() {
   const router = useRouter();
   const pathname = usePathname();

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
@@ -10,7 +10,7 @@ export function Select({
   label,
   error,
   options,
-  className = '',
+  className = "",
   id,
   ...props
 }: SelectProps) {
@@ -19,7 +19,10 @@ export function Select({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={selectId} className="block text-sm font-medium text-foreground mb-2">
+        <label
+          htmlFor={selectId}
+          className="block text-sm font-medium text-foreground mb-2"
+        >
           {label}
         </label>
       )}
@@ -34,20 +37,32 @@ export function Select({
           </option>
         ))}
       </select>
-      {error && (
-        <p className="text-sm text-destructive mt-1">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive mt-1">{error}</p>}
     </div>
   );
 }
 
 // Export additional components for backwards compatibility
 export const SelectTrigger = Select;
-export const SelectContent = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-export const SelectItem = ({ children, value }: { children: React.ReactNode; value: string }) => <option value={value}>{children}</option>;
-export const SelectValue = ({ placeholder }: { placeholder?: string }) => <option value="">{placeholder || 'Select...'}</option>;
-export const SelectGroup = ({ children }: { children: React.ReactNode }) => <>{children}</>;
-export const SelectLabel = ({ children }: { children: React.ReactNode }) => <optgroup label={String(children)}></optgroup>;
+export const SelectContent = ({ children }: { children: React.ReactNode }) => (
+  <>{children}</>
+);
+export const SelectItem = ({
+  children,
+  value,
+}: {
+  children: React.ReactNode;
+  value: string;
+}) => <option value={value}>{children}</option>;
+export const SelectValue = ({ placeholder }: { placeholder?: string }) => (
+  <option value="">{placeholder || "Select..."}</option>
+);
+export const SelectGroup = ({ children }: { children: React.ReactNode }) => (
+  <>{children}</>
+);
+export const SelectLabel = ({ children }: { children: React.ReactNode }) => (
+  <optgroup label={String(children)}></optgroup>
+);
 export const SelectSeparator = () => null;
 export const SelectScrollUpButton = () => null;
 export const SelectScrollDownButton = () => null;

@@ -23,16 +23,6 @@ import {
   deleteProject,
 } from "@/server/actions/projects";
 
-/**
- * Admin Projects Management Page
- *
- * Full project management with all permissions:
- * - Create new projects (fetches from MongoDB)
- * - Edit any project
- * - Delete any project
- * - View all projects from database
- */
-
 interface Project {
   id: string;
   name: string;
@@ -81,7 +71,7 @@ export default function AdminProjectsPage() {
         setProjects(result.projects as any);
       }
     } catch (error) {
-      console.error("[v0] Error fetching projects:", error);
+      console.error(" Error fetching projects:", error);
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +131,7 @@ export default function AdminProjectsPage() {
       });
       setIsModalOpen(false);
     } catch (error) {
-      console.error("[v0] Error saving project:", error);
+      console.error(" Error saving project:", error);
     } finally {
       setIsLoading(false);
     }
@@ -169,7 +159,7 @@ export default function AdminProjectsPage() {
         await fetchProjects();
       }
     } catch (error) {
-      console.error("[v0] Error deleting project:", error);
+      console.error(" Error deleting project:", error);
     } finally {
       setIsLoading(false);
       setDeleteConfirm(null);

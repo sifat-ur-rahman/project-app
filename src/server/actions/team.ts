@@ -11,7 +11,8 @@ export async function getAllTeamMembers() {
 
     const members = await TeamMember.find()
       .populate("user", "name email")
-      .populate("assignedProjects", "name");
+      .populate("assignedProjects", "name")
+      .sort({ createdAt: -1 });
 
     return {
       success: true,

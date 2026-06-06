@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from "mongoose";
 
 export interface IProject extends Document {
   _id: mongoose.Types.ObjectId;
@@ -6,8 +6,8 @@ export interface IProject extends Document {
   description: string;
   owner: mongoose.Types.ObjectId;
   ownerEmail: string;
-  status: 'planning' | 'in-progress' | 'completed' | 'on-hold';
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  status: "planning" | "in-progress" | "completed" | "on-hold";
+  priority: "low" | "medium" | "high" | "critical";
   startDate: Date;
   endDate: Date;
   budget?: number;
@@ -22,7 +22,7 @@ const projectSchema = new Schema<IProject>(
   {
     name: {
       type: String,
-      required: [true, 'Please provide a project name'],
+      required: [true, "Please provide a project name"],
       trim: true,
     },
     description: {
@@ -31,7 +31,7 @@ const projectSchema = new Schema<IProject>(
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: "User",
       required: true,
     },
     ownerEmail: {
@@ -40,13 +40,13 @@ const projectSchema = new Schema<IProject>(
     },
     status: {
       type: String,
-      enum: ['planning', 'in-progress', 'completed', 'on-hold'],
-      default: 'planning',
+      enum: ["planning", "in-progress", "completed", "on-hold"],
+      default: "planning",
     },
     priority: {
       type: String,
-      enum: ['low', 'medium', 'high', 'critical'],
-      default: 'medium',
+      enum: ["low", "medium", "high", "critical"],
+      default: "medium",
     },
     startDate: {
       type: Date,
@@ -61,11 +61,12 @@ const projectSchema = new Schema<IProject>(
     team: [
       {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: "User",
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export default mongoose.models.Project || mongoose.model<IProject>('Project', projectSchema);
+export default mongoose.models.Project ||
+  mongoose.model<IProject>("Project", projectSchema);

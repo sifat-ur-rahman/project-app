@@ -32,17 +32,6 @@ import { getAllProjects } from "@/server/actions/projects";
 import { getAllTasks } from "@/server/actions/tasks";
 import { getAllTeamMembers } from "@/server/actions/team";
 
-/**
- * Admin Dashboard Page
- *
- * Full system overview with real data from database:
- * - Total projects count from MongoDB
- * - All tasks overview with status breakdown
- * - Team members count
- * - Overall completion rate calculated from real data
- * - Charts based on actual project/task data
- */
-
 export default function AdminDashboardPage() {
   const [userEmail, setUserEmail] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -77,7 +66,7 @@ export default function AdminDashboardPage() {
         setTeamMembers(teamResult.members || []);
       }
     } catch (err) {
-      console.error("[v0] Error fetching dashboard data:", err);
+      console.error(" Error fetching dashboard data:", err);
       setError("Failed to load dashboard data");
     } finally {
       setIsLoading(false);

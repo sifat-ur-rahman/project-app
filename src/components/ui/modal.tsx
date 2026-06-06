@@ -17,17 +17,24 @@ export function Modal({
   onClose,
   title,
   children,
-  size = "md",
+  size = "lg",
   actions,
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
+      const scrollbarWidth =
+        window.innerWidth - document.documentElement.clientWidth;
+
       document.body.style.overflow = "hidden";
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     }
+
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = "";
+      document.body.style.paddingRight = "";
     };
   }, [isOpen]);
 
@@ -63,7 +70,9 @@ export function Modal({
         </div>
 
         {/* Content */}
-        <div className="px-6 py-4 max-h-[60vh] overflow-y-auto">{children}</div>
+        <div className="px-6 py-4 max-h-[60vh] scrollbar-hidden overflow-y-scroll">
+          {children}
+        </div>
 
         {/* Footer */}
         {actions && (

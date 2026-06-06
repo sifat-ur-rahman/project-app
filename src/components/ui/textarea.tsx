@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -8,7 +8,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 export function Textarea({
   label,
   error,
-  className = '',
+  className = "",
   id,
   ...props
 }: TextareaProps) {
@@ -17,7 +17,10 @@ export function Textarea({
   return (
     <div className="w-full">
       {label && (
-        <label htmlFor={textareaId} className="block text-sm font-medium text-foreground mb-2">
+        <label
+          htmlFor={textareaId}
+          className="block text-sm font-medium text-foreground mb-2"
+        >
           {label}
         </label>
       )}
@@ -26,9 +29,7 @@ export function Textarea({
         className={`w-full px-4 py-2 rounded-md border border-input bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-colors duration-200 resize-vertical ${className}`}
         {...props}
       />
-      {error && (
-        <p className="text-sm text-destructive mt-1">{error}</p>
-      )}
+      {error && <p className="text-sm text-destructive mt-1">{error}</p>}
     </div>
   );
 }

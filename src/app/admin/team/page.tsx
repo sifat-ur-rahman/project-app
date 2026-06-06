@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,111 +14,135 @@ import { Badge } from "@/components/ui/badge";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
-import { Plus, Search, Edit, Trash2, Users } from "lucide-react";
-
-/**
- * Admin Team Management Page
- *
- * Full team management with all permissions:
- * - Add new team members
- * - Edit member details
- * - Delete members
- * - Assign roles
- * - View all members
- */
-
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: "admin" | "pm" | "member";
-  status: "active" | "inactive";
-  joinDate: string;
-  projects: number;
-}
-
-const initialMembers: TeamMember[] = [
-  {
-    id: "1",
-    name: "Sarah Chen",
-    email: "sarah@company.com",
-    role: "member",
-    status: "active",
-    joinDate: "2024-01-15",
-    projects: 3,
-  },
-  {
-    id: "2",
-    name: "John Smith",
-    email: "john@company.com",
-    role: "pm",
-    status: "active",
-    joinDate: "2023-06-20",
-    projects: 2,
-  },
-  {
-    id: "3",
-    name: "Emily Davis",
-    email: "emily@company.com",
-    role: "member",
-    status: "active",
-    joinDate: "2024-03-10",
-    projects: 4,
-  },
-];
+import { Plus, Search, Edit, Trash2, Users, AlertCircle } from "lucide-react";
+import {
+  getAllTeamMembers,
+  createTeamMember,
+  updateTeamMember,
+  deleteTeamMember,
+} from "@/server/actions/team";
+import { getAllTasks } from "@/server/actions/tasks";
 
 export default function AdminTeamPage() {
-  const [members, setMembers] = useState(initialMembers);
+  const [members, setMembers] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    role: "member" as const,
+    role: "member",
+    department: "",
+    password: "",
+    status: "active",
   });
 
-  const handleAddMember = () => {
-    if (formData.name.trim() && formData.email.trim()) {
-      if (editingId) {
-        setMembers(
-          members.map((m) => (m.id === editingId ? { ...m, ...formData } : m)),
-        );
-        setEditingId(null);
-      } else {
-        const newMember: TeamMember = {
-          id: Date.now().toString(),
-          name: formData.name,
-          email: formData.email,
-          role: formData.role,
-          status: "active",
-          joinDate: new Date().toISOString().split("T")[0],
-          projects: 0,
-        };
-        setMembers([newMember, ...members]);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const [membersResult, tasksResult] = await Promise.all([
+        getAllTeamMembers(),
+        getAllTasks(),
+      ]);
+
+      if (membersResult.success) {
+        setMembers(membersResult.members || []);
       }
-      setFormData({ name: "", email: "", role: "member" });
-      setIsModalOpen(false);
+      if (tasksResult.success) {
+        setTasks(tasksResult.tasks || []);
+      }
+    } catch (err) {
+      console.error(" Error fetching team data:", err);
+      setError("Failed to load team members");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleOpenEdit = (member: TeamMember) => {
-    setEditingId(member.id);
+  const handleAddMember = async () => {
+    if (!formData.name.trim() || !formData.email.trim()) return;
+
+    setIsLoading(true);
+    try {
+      if (editingId) {
+        const result = await updateTeamMember(editingId, {
+          name: formData.name,
+          status: formData.status,
+          role: formData.role,
+          department: formData.department,
+        });
+
+        if (result.success) {
+          await fetchData();
+          setEditingId(null);
+        }
+      } else {
+        const result = await createTeamMember({
+          name: formData.name,
+          email: formData.email,
+          role: formData.role,
+          department: formData.department,
+          password: formData.password,
+        });
+
+        if (result.success) {
+          await fetchData();
+        }
+      }
+
+      setFormData({
+        name: "",
+        email: "",
+        role: "member",
+        department: "",
+        password: "",
+        status: "active",
+      });
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error(" Error saving member:", err);
+      setError("Failed to save team member");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleOpenEdit = (member: any) => {
+    setEditingId(member._id || member.id);
     setFormData({
       name: member.name,
       email: member.email,
-      role:
-        member.role === "admin" || member.role === "pm"
-          ? "member"
-          : member.role,
+      role: member.role,
+      department: member.department || "",
+      password: "",
+      status: member.status,
     });
     setIsModalOpen(true);
   };
 
-  const handleDeleteMember = (id: string) => {
-    setMembers(members.filter((m) => m.id !== id));
-    setDeleteConfirm(null);
+  const handleDeleteMember = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const result = await deleteTeamMember(id);
+      if (result.success) {
+        await fetchData();
+      }
+    } catch (err) {
+      console.error(" Error deleting member:", err);
+      setError("Failed to delete team member");
+    } finally {
+      setIsLoading(false);
+      setDeleteConfirm(null);
+    }
   };
 
   const filteredMembers = members.filter(
@@ -141,6 +165,27 @@ export default function AdminTeamPage() {
     }
   };
 
+  const getProjectCountForMember = (memberEmail: string) => {
+    return tasks.filter((t) => t.assignee?.email === memberEmail).length;
+  };
+
+  if (isLoading && members.length === 0) {
+    return (
+      <div className="p-6 space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">
+              Team Management
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Loading team members...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -150,21 +195,42 @@ export default function AdminTeamPage() {
             Team Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage all team members and their roles
+            {members.length} members from database
           </p>
         </div>
         <Button
           onClick={() => {
             setEditingId(null);
-            setFormData({ name: "", email: "", role: "member" });
+            setFormData({
+              name: "",
+              email: "",
+              role: "member",
+              department: "",
+              password: "",
+              status: "active",
+            });
             setIsModalOpen(true);
           }}
           className="flex items-center gap-2"
+          disabled={isLoading}
         >
           <Plus size={20} />
           Add Member
         </Button>
       </div>
+
+      {/* Error State */}
+      {error && (
+        <Card className="border-destructive bg-destructive/10">
+          <CardContent className="pt-6 flex gap-3">
+            <AlertCircle className="text-destructive flex-shrink-0" />
+            <div>
+              <p className="font-medium text-destructive">Error</p>
+              <p className="text-sm text-muted-foreground">{error}</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -189,9 +255,9 @@ export default function AdminTeamPage() {
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <p className="text-sm text-muted-foreground">Active Now</p>
+            <p className="text-sm text-muted-foreground">Project Managers</p>
             <p className="text-2xl font-bold">
-              {members.filter((m) => m.status === "active").length}
+              {members.filter((m) => m.role === "pm").length}
             </p>
           </CardContent>
         </Card>
@@ -205,80 +271,80 @@ export default function AdminTeamPage() {
             size={20}
           />
           <Input
-            placeholder="Search members..."
+            placeholder="Search members by name, email, or role..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
+            disabled={isLoading}
           />
         </div>
       </div>
 
       {/* Members Table */}
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-muted border-b border-border">
-            <tr>
-              <th className="text-left p-4 font-medium">Name</th>
-              <th className="text-left p-4 font-medium">Email</th>
-              <th className="text-left p-4 font-medium">Role</th>
-              <th className="text-left p-4 font-medium">Status</th>
-              <th className="text-left p-4 font-medium">Projects</th>
-              <th className="text-left p-4 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {filteredMembers.map((member) => (
-              <tr key={member.id} className="hover:bg-muted/50">
-                <td className="p-4 font-medium">{member.name}</td>
-                <td className="p-4 text-sm text-muted-foreground">
-                  {member.email}
-                </td>
-                <td className="p-4">
-                  <Badge variant={getRoleColor(member.role) as any}>
-                    {member.role}
-                  </Badge>
-                </td>
-                <td className="p-4">
-                  <Badge
-                    variant={
-                      member.status === "active" ? "success" : "secondary"
-                    }
-                  >
-                    {member.status}
-                  </Badge>
-                </td>
-                <td className="p-4 text-sm">{member.projects}</td>
-                <td className="p-4">
-                  <div className="flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleOpenEdit(member)}
-                    >
-                      <Edit size={16} />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setDeleteConfirm(member.id)}
-                    >
-                      <Trash2 size={16} className="text-destructive" />
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Empty State */}
-      {filteredMembers.length === 0 && (
+      {filteredMembers.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <p className="text-muted-foreground">No team members found</p>
+            <p className="text-muted-foreground">
+              {members.length === 0
+                ? "No team members in database"
+                : "No team members matching search"}
+            </p>
           </CardContent>
         </Card>
+      ) : (
+        <div className="border rounded-lg overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-muted border-b border-border">
+              <tr>
+                <th className="text-left p-4 font-medium">Name</th>
+                <th className="text-left p-4 font-medium">Email</th>
+                <th className="text-left p-4 font-medium">Role</th>
+                <th className="text-left p-4 font-medium">Tasks Assigned</th>
+                <th className="text-left p-4 font-medium">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {filteredMembers.map((member) => (
+                <tr key={member._id || member.id} className="hover:bg-muted/50">
+                  <td className="p-4 font-medium">{member.name}</td>
+                  <td className="p-4 text-sm text-muted-foreground">
+                    {member.email}
+                  </td>
+                  <td className="p-4">
+                    <Badge variant={getRoleColor(member.role) as any}>
+                      {member.role}
+                    </Badge>
+                  </td>
+                  <td className="p-4 text-sm">
+                    {getProjectCountForMember(member.email)}
+                  </td>
+                  <td className="p-4">
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOpenEdit(member)}
+                        disabled={isLoading}
+                      >
+                        <Edit size={16} />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() =>
+                          setDeleteConfirm(member._id || member.id)
+                        }
+                        disabled={isLoading}
+                      >
+                        <Trash2 size={16} className="text-destructive" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
 
       {/* Add/Edit Modal */}
@@ -287,7 +353,14 @@ export default function AdminTeamPage() {
         onClose={() => {
           setIsModalOpen(false);
           setEditingId(null);
-          setFormData({ name: "", email: "", role: "member" });
+          setFormData({
+            name: "",
+            email: "",
+            role: "member",
+            department: "",
+            password: "",
+            status: "",
+          });
         }}
         title={editingId ? "Edit Member" : "Add New Member"}
         actions={
@@ -297,12 +370,25 @@ export default function AdminTeamPage() {
               onClick={() => {
                 setIsModalOpen(false);
                 setEditingId(null);
-                setFormData({ name: "", email: "", role: "member" });
+                setFormData({
+                  name: "",
+                  email: "",
+                  role: "member",
+                  department: "",
+                  password: "",
+                  status: "",
+                });
               }}
+              disabled={isLoading}
             >
               Cancel
             </Button>
-            <Button onClick={handleAddMember}>
+            <Button
+              onClick={handleAddMember}
+              disabled={
+                isLoading || !formData.name.trim() || !formData.email.trim()
+              }
+            >
               {editingId ? "Update" : "Add"}
             </Button>
           </>
@@ -314,6 +400,7 @@ export default function AdminTeamPage() {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Enter member name"
+            disabled={isLoading}
           />
           <Input
             label="Email"
@@ -323,19 +410,56 @@ export default function AdminTeamPage() {
               setFormData({ ...formData, email: e.target.value })
             }
             placeholder="Enter email address"
+            disabled={isLoading}
           />
-          <Select
-            label="Role"
-            value={formData.role}
+          <div className="flex gap-4">
+            <Select
+              label="Role"
+              value={formData.role}
+              onChange={(e) =>
+                setFormData({ ...formData, role: e.target.value })
+              }
+              options={[
+                { value: "member", label: "Team Member" },
+                { value: "pm", label: "Project Manager" },
+                { value: "admin", label: "Administrator" },
+              ]}
+              disabled={isLoading}
+            />
+            <Select
+              label="Status"
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({ ...formData, status: e.target.value })
+              }
+              options={[
+                { value: "active", label: "Active" },
+                { value: "inactive", label: "Inactive" },
+              ]}
+              disabled={isLoading}
+            />
+          </div>
+          <Input
+            label="Department"
+            value={formData.department || ""}
             onChange={(e) =>
-              setFormData({ ...formData, role: e.target.value as any })
+              setFormData({ ...formData, department: e.target.value })
             }
-            options={[
-              { value: "member", label: "Team Member" },
-              { value: "pm", label: "Project Manager" },
-              { value: "admin", label: "Administrator" },
-            ]}
+            placeholder="Enter department (optional)"
+            disabled={isLoading}
           />
+          {!editingId && (
+            <Input
+              label="Password"
+              type="password"
+              value={formData.password || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="Set a password for the new member"
+              disabled={isLoading}
+            />
+          )}
         </div>
       </Modal>
 
