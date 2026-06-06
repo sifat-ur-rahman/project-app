@@ -388,7 +388,7 @@ export default function AdminTasksPage() {
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <span>{task.projectId || "No project"}</span>
                       <span>•</span>
-                      <span>{task.assignee?.name || "Unassigned"}</span>
+                      <span>{task.assigneeName || "Unassigned"}</span>
                     </div>
                     {task.description && (
                       <p className="text-sm text-muted-foreground mt-1 truncate">

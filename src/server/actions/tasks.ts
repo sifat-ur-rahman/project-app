@@ -5,6 +5,7 @@ import { connectDB } from "../db";
 import Project from "../models/Project";
 import Task from "../models/Task";
 import { Types } from "mongoose";
+import User from "../models/User";
 
 export async function getAllTasks() {
   try {
@@ -24,6 +25,7 @@ export async function getAllTasks() {
         projectName: task.projectName,
         projectId: task.project._id.toString(),
         assigneeEmail: task.assigneeEmail,
+        assigneeName: task.assignee?.name,
         status: task.status,
         priority: task.priority,
         dueDate: task.dueDate?.toISOString(),
@@ -95,6 +97,15 @@ export async function createTask(data: {
     console.log("createTask server", data);
     const project = await Project.findById(data.projectId).lean();
 
+    const assigneeId = await User.findOne({ email: data.assigneeEmail }).lean();
+
+    if (!assigneeId) {
+      return {
+        success: false,
+        error: "Assignee not found",
+      };
+    }
+
     if (project) {
       data.projectName = project.name;
     }
@@ -102,7 +113,7 @@ export async function createTask(data: {
     const task = await Task.create({
       ...data,
       project: new Types.ObjectId(data.projectId),
-      assignee: new Types.ObjectId(),
+      assignee: assigneeId?._id,
       createdBy: new Types.ObjectId(),
     });
     revalidatePath("/");
@@ -132,12 +143,29 @@ export async function updateTask(
     priority?: string;
     dueDate?: string;
     assigneeEmail?: string;
+    assignee?: any;
   },
 ) {
   try {
     await connectDB();
+    console.log("updateTask server", data);
 
-    const task = await Task.findByIdAndUpdate(taskId, data, { new: true });
+    if (data.assigneeEmail) {
+      const assigneeId = await User.findOne({
+        email: data.assigneeEmail,
+      }).lean();
+      if (!assigneeId) {
+        return {
+          success: false,
+          error: "Assignee not found",
+        };
+      }
+      data.assignee = assigneeId?._id;
+    }
+
+    const task = await Task.findByIdAndUpdate(taskId, data, {
+      new: true,
+    }).lean();
 
     if (!task) {
       return {

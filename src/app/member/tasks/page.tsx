@@ -139,7 +139,7 @@ export default function MemberTasksPage() {
 
       {/* Search and Filters */}
       <div className="flex gap-2 flex-wrap">
-        <div className="flex-1 min-w-64 relative">
+        <div className="flex-1  relative">
           <Search
             className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
             size={20}
@@ -152,17 +152,19 @@ export default function MemberTasksPage() {
             disabled={isLoading}
           />
         </div>
-        <Select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          options={[
-            { value: "all", label: "All Statuses" },
-            { value: "pending", label: "Pending" },
-            { value: "in-progress", label: "In Progress" },
-            { value: "completed", label: "Completed" },
-          ]}
-          disabled={isLoading}
-        />
+        <div className="w-48">
+          <Select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            options={[
+              { value: "all", label: "All Statuses" },
+              { value: "pending", label: "Pending" },
+              { value: "in-progress", label: "In Progress" },
+              { value: "completed", label: "Completed" },
+            ]}
+            disabled={isLoading}
+          />
+        </div>
       </div>
 
       {/* Tasks List */}
@@ -178,13 +180,13 @@ export default function MemberTasksPage() {
             </CardContent>
           </Card>
         ) : (
-          filteredTasks.map((task) => (
-            <Card key={task._id}>
+          filteredTasks.map((task, index) => (
+            <Card key={index}>
               <CardContent className="py-4">
                 <div className="flex items-center justify-between gap-4">
                   {/* Status Toggle */}
                   <button
-                    onClick={() => handleToggleStatus(task._id, task.status)}
+                    onClick={() => handleToggleStatus(task.id, task.status)}
                     className="flex-shrink-0 text-muted-foreground hover:text-primary"
                     disabled={isLoading}
                     title={`Click to mark as ${task.status === "completed" ? "pending" : "completed"}`}
@@ -231,13 +233,14 @@ export default function MemberTasksPage() {
 
                   {/* Status Update Button */}
                   <Button
-                    variant="ghost"
+                    variant="destructive"
                     size="sm"
                     onClick={() => {
                       setSelectedTask(task);
                       setIsModalOpen(true);
                     }}
                     disabled={isLoading}
+                    className=""
                   >
                     Update Status
                   </Button>
@@ -271,7 +274,7 @@ export default function MemberTasksPage() {
             <Button
               onClick={() =>
                 selectedTask &&
-                handleUpdateStatus(selectedTask._id, selectedTask.status)
+                handleUpdateStatus(selectedTask.id, selectedTask.status)
               }
               disabled={isLoading}
             >
@@ -289,10 +292,10 @@ export default function MemberTasksPage() {
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium">Current Status</label>
-              <p className="text-sm text-muted-foreground mt-1 capitalize">
-                {selectedTask.status}
-              </p>
+              <label className="text-sm font-medium ">Priority : </label>
+              <Badge variant={getPriorityColor(selectedTask.priority)}>
+                {selectedTask.priority}
+              </Badge>
             </div>
             <div>
               <label className="text-sm font-medium">New Status</label>

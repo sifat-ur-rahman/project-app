@@ -15,6 +15,7 @@ import { getTasksByAssigneeEmail } from "@/server/actions/tasks";
 
 export default function MemberDashboardPage() {
   const [userName, setUserName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
   const [tasks, setTasks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -28,6 +29,7 @@ export default function MemberDashboardPage() {
         : "Team Member");
 
     setUserName(name);
+    setUserEmail(email || "");
     if (email) fetchMyTasks(email);
   }, []);
 
@@ -67,6 +69,7 @@ export default function MemberDashboardPage() {
           <h1 className="text-3xl font-bold text-foreground mb-2">
             Welcome, {userName}
           </h1>
+
           <p className="text-muted-foreground">Loading your tasks...</p>
         </div>
       </div>
@@ -80,8 +83,9 @@ export default function MemberDashboardPage() {
         <h1 className="text-3xl font-bold text-foreground mb-2">
           Welcome, {userName}
         </h1>
+
         <p className="text-muted-foreground">
-          {tasks.length} assigned tasks from database
+          {tasks.length} assigned tasks found
         </p>
       </div>
 

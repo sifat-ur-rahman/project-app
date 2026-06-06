@@ -199,7 +199,7 @@ export default function ManagerTasksPage() {
                   <button
                     onClick={() =>
                       updateTaskStatus(
-                        task._id,
+                        task.id,
                         task.status === "completed" ? "pending" : "completed",
                       ).then(() => fetchData())
                     }
@@ -218,7 +218,7 @@ export default function ManagerTasksPage() {
                       {task.title}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {task.assignee?.name || "Unassigned"}
+                      {task.assigneeName || "Unassigned"}
                     </p>
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
